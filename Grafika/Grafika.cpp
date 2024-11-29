@@ -24,32 +24,40 @@ void PaintStart(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale)
     SelectObject(hdc, *tobj);
     RECT r;
     SetRect(&r, p.x, p.y, p.x + scale, p.y + scale);
-    DrawTextW(hdc, LPCWSTR(L"Стартыжвкрпшгывкрдпшфаыупвкаепнгрхзщдшлгонрк"), -1, &r,  DT_VCENTER);
-    //TextOut(hdc, p.x + 5, p.y + 20, LPCWSTR(L"Стартыжвкрпшгывкрдпшфаыупвкаепнгрхзщдшлгонрк"), 100);
+    DrawTextW(hdc, LPCWSTR(L"Старт"), -1, &r,  DT_VCENTER);
 }
 
-void PaintBank(HDC hdc, HGDIOBJ obj, HGDIOBJ objdef, int x1, int y1, int x2, int y2)
+void PaintBank(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale)
 {
-    SelectObject(hdc, obj);
-    Rectangle(hdc, x1, y1, x2, y2);
-    SelectObject(hdc, objdef);
+    SelectObject(hdc, *obj);
+    Rectangle(hdc, p.x, p.y, p.x + scale, p.y + scale);
+    SelectObject(hdc, *tobj);
+    RECT r;
+    SetRect(&r, p.x, p.y, p.x + scale, p.y + scale);
+    DrawTextW(hdc, LPCWSTR(L"Банк"), -1, &r, DT_VCENTER);
 }
 
-void PaintBuySell(HDC hdc, HGDIOBJ obj, HGDIOBJ objdef, int x1, int y1, int x2, int y2)
+void PaintBuySell(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale, LPCWSTR name)
 {
-    SelectObject(hdc, obj);
-    Rectangle(hdc, x1, y1, x2, y2);
-    SelectObject(hdc, objdef);
+    SelectObject(hdc, *obj);
+    Rectangle(hdc, p.x, p.y, p.x + scale, p.y + scale);
+    SelectObject(hdc, *tobj);
+    RECT r;
+    SetRect(&r, p.x, p.y, p.x + scale, p.y + scale);
+    DrawTextW(hdc, name, -1, &r, DT_VCENTER);
+}
+
+void PaintIncident(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale)
+{
+    SelectObject(hdc, *obj);
+    Rectangle(hdc, p.x, p.y, p.x + scale, p.y + scale);
+    SelectObject(hdc, *tobj);
+    RECT r;
+    SetRect(&r, p.x, p.y, p.x + scale, p.y + scale);
+    DrawTextW(hdc, LPCWSTR(L"Событие"), -1, &r, DT_VCENTER);
 }
 
 void PaintPrison(HDC hdc, HGDIOBJ obj, HGDIOBJ objdef, int x1, int y1, int x2, int y2)
-{
-    SelectObject(hdc, obj);
-    Rectangle(hdc, x1, y1, x2, y2);
-    SelectObject(hdc, objdef);
-}
-
-void PaintIncident(HDC hdc, HGDIOBJ obj, HGDIOBJ objdef, int x1, int y1, int x2, int y2)
 {
     SelectObject(hdc, obj);
     Rectangle(hdc, x1, y1, x2, y2);
@@ -64,16 +72,40 @@ void Paint(HDC hdc, WPARAM wParam, LPARAM lParam)
     HGDIOBJ objdef = CreateSolidBrush(RGB(132, 45, 200));
     POINT point;
     
-    for (size_t i = 0; i < 13; i++)
-    {
-        point.x = 100 + i * 100;
-        point.y = 100 + i * 100;
-        PaintStart(hdc, &obj, &tobj, point, 80);
-        
-    }
-    //HGDIOBJ* obj = (HGDIOBJ*)malloc(sizeof(HGDIOBJ));
-    //objdef = &CreateSolidBrush(RGB(132, 45, 200));
-}
+    point.x = 300;
+    point.y = 10;
+    PaintStart(hdc, &obj, &tobj, point, 90);
+
+    point.x = 400;
+    point.y = 10;
+    obj = CreateSolidBrush(RGB(10, 220, 100));
+    PaintBank(hdc, &obj, &tobj, point, 90);
+
+    point.x = 500;
+    point.y = 10;
+    obj = CreateSolidBrush(RGB(30, 120, 200));
+    PaintBuySell(hdc, &obj, &tobj, point, 90, L"Золото");
+
+    point.x = 600;
+    point.y = 10;
+    obj = CreateSolidBrush(RGB(120, 120, 150));
+    PaintBuySell(hdc, &obj, &tobj, point, 90, L"Серебро");
+
+    point.x = 700;
+    point.y = 10;
+    obj = CreateSolidBrush(RGB(124, 34, 93));
+    PaintBuySell(hdc, &obj, &tobj, point, 90, L"Медь");
+
+    point.x = 800;
+    point.y = 10;
+    obj = CreateSolidBrush(RGB(0, 0, 0));
+    PaintIncident(hdc, &obj, &tobj, point, 90);
+
+    point.x = 900;
+    point.y = 10;
+    obj = CreateSolidBrush(RGB(200, 120, 10));
+    PaintBuySell(hdc, &obj, &tobj, point, 90, L"Газ");
+}   
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
