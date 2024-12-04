@@ -57,54 +57,133 @@ void PaintIncident(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale)
     DrawTextW(hdc, LPCWSTR(L"Событие"), -1, &r, DT_VCENTER);
 }
 
-void PaintPrison(HDC hdc, HGDIOBJ obj, HGDIOBJ objdef, int x1, int y1, int x2, int y2)
+void PaintPrison(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale)
 {
-    SelectObject(hdc, obj);
-    Rectangle(hdc, x1, y1, x2, y2);
-    SelectObject(hdc, objdef);
+    SelectObject(hdc, *obj);
+    Rectangle(hdc, p.x, p.y, p.x + scale, p.y + scale);
+    SelectObject(hdc, *tobj);
+    RECT r;
+    SetRect(&r, p.x, p.y, p.x + scale, p.y + scale);
+    DrawTextW(hdc, LPCWSTR(L"Событие"), -1, &r, DT_VCENTER);
 }
 
-HGDIOBJ obj = CreateSolidBrush(RGB(210, 10, 200));
+void PaintRest(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale) 
+{
+    SelectObject(hdc, *obj);
+    Rectangle(hdc, p.x, p.y, p.x + scale, p.y + scale);
+    SelectObject(hdc, *tobj);
+    RECT r;
+    SetRect(&r, p.x, p.y, p.x + scale, p.y + scale);
+    DrawTextW(hdc, LPCWSTR(L"Отдых"), -1, &r, DT_VCENTER);
+}
+
+HGDIOBJ obj;
 HGDIOBJ tobj = CreateFont(20, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, L"");
 
 void Paint(HDC hdc, WPARAM wParam, LPARAM lParam) 
 {
     HGDIOBJ objdef = CreateSolidBrush(RGB(132, 45, 200));
     POINT point;
-    
-    point.x = 300;
+    int scale = 75;
+    int lenght = 10;
+    point.x = 250;
     point.y = 10;
-    PaintStart(hdc, &obj, &tobj, point, 90);
 
-    point.x = 400;
-    point.y = 10;
-    obj = CreateSolidBrush(RGB(10, 220, 100));
-    PaintBank(hdc, &obj, &tobj, point, 90);
+    for (int i = 0; i < lenght; i++)
+    {
+        point.x += scale + 10;
+        
+        switch (i)
+        {
+        case 0:
+            obj = CreateSolidBrush(RGB(210, 10, 200));
+            PaintStart(hdc, &obj, &tobj, point, scale);
+            break;
+        case 1:
+            obj = CreateSolidBrush(RGB(10, 220, 100));
+            PaintBank(hdc, &obj, &tobj, point, scale);
+            break;
+        case 2:
+            obj = CreateSolidBrush(RGB(30, 120, 200));
+            PaintBuySell(hdc, &obj, &tobj, point, scale, L"Золото");
+            break;
+        case 3:
+            obj = CreateSolidBrush(RGB(120, 120, 150));
+            PaintBuySell(hdc, &obj, &tobj, point, scale, L"Серебро");
+            break;
+        case 4:
+            obj = CreateSolidBrush(RGB(124, 34, 93));
+            PaintBuySell(hdc, &obj, &tobj, point, scale, L"Медь");
+            break;
+        case 5:
+            obj = CreateSolidBrush(RGB(0, 110, 0));
+            PaintIncident(hdc, &obj, &tobj, point, scale);
+            break;
+        case 6:
+            obj = CreateSolidBrush(RGB(200, 120, 10));
+            PaintBuySell(hdc, &obj, &tobj, point, scale, L"Газ");
+            break;
+        case 7:
+            obj = CreateSolidBrush(RGB(0, 0, 0));
+            PaintBuySell(hdc, &obj, &tobj, point, scale, L"Уголь");
+            break;
+        case 8:
+            obj = CreateSolidBrush(RGB(200, 158, 100));
+            PaintBuySell(hdc, &obj, &tobj, point, scale, L"Нефть");
+            break;
+        case 9:
+            obj = CreateSolidBrush(RGB(60, 89, 182));
+            PaintRest(hdc, &obj, &tobj, point, scale);
+            break;
 
-    point.x = 500;
-    point.y = 10;
-    obj = CreateSolidBrush(RGB(30, 120, 200));
-    PaintBuySell(hdc, &obj, &tobj, point, 90, L"Золото");
+        default:
+            break;
+        }
+    }
 
-    point.x = 600;
-    point.y = 10;
-    obj = CreateSolidBrush(RGB(120, 120, 150));
-    PaintBuySell(hdc, &obj, &tobj, point, 90, L"Серебро");
+    for (int i = 0; i < lenght - 1; i++)
+    {
+        point.y += scale + 10;
 
-    point.x = 700;
-    point.y = 10;
-    obj = CreateSolidBrush(RGB(124, 34, 93));
-    PaintBuySell(hdc, &obj, &tobj, point, 90, L"Медь");
-
-    point.x = 800;
-    point.y = 10;
-    obj = CreateSolidBrush(RGB(0, 0, 0));
-    PaintIncident(hdc, &obj, &tobj, point, 90);
-
-    point.x = 900;
-    point.y = 10;
-    obj = CreateSolidBrush(RGB(200, 120, 10));
-    PaintBuySell(hdc, &obj, &tobj, point, 90, L"Газ");
+        switch (i)
+        {
+        case 0:
+            obj = CreateSolidBrush(RGB(210, 10, 200));
+            PaintStart(hdc, &obj, &tobj, point, scale);
+            break;
+        case 1:
+            obj = CreateSolidBrush(RGB(10, 220, 100));
+            PaintBank(hdc, &obj, &tobj, point, scale);
+            break;
+        case 2:
+            obj = CreateSolidBrush(RGB(30, 120, 200));
+            PaintBuySell(hdc, &obj, &tobj, point, scale, L"Золото");
+            break;
+        case 3:
+            obj = CreateSolidBrush(RGB(120, 120, 150));
+            PaintBuySell(hdc, &obj, &tobj, point, scale, L"Серебро");
+            break;
+        case 4:
+            obj = CreateSolidBrush(RGB(124, 34, 93));
+            PaintBuySell(hdc, &obj, &tobj, point, scale, L"Медь");
+            break;
+        case 5:
+            obj = CreateSolidBrush(RGB(0, 110, 0));
+            PaintIncident(hdc, &obj, &tobj, point, scale);
+            break;
+        case 6:
+            obj = CreateSolidBrush(RGB(200, 120, 10));
+            PaintBuySell(hdc, &obj, &tobj, point, scale, L"Газ");
+            break;
+        case 7:
+            obj = CreateSolidBrush(RGB(0, 0, 0));
+            PaintBuySell(hdc, &obj, &tobj, point, scale, L"Уголь");
+            break;
+        
+        default:
+            break;
+        }
+    }
 }   
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
