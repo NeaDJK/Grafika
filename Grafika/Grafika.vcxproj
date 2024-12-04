@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Class.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Grafika.h" />
     <ClInclude Include="Resource.h" />
