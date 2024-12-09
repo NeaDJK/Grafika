@@ -12,7 +12,7 @@ HINSTANCE hInst;                                // текущий экземпл
 WCHAR szTitle[MAX_LOADSTRING];                  // Текст строки заголовка
 WCHAR szWindowClass[MAX_LOADSTRING];            // имя класса главного окна
 
-int count_of_players = 2;                       //кол-во игроков
+int count_of_players = 5;                       //кол-во игроков
 cell field[size_of_field];                      //поле
 player players[max_players];                    //игроки
 int cube;                                       //результат броска кубика
@@ -24,6 +24,7 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+void                Init(); // определение начальных условий поля
 
 int Transform(int n, POINT *p) 
 {
@@ -37,7 +38,7 @@ int Transform(int n, POINT *p)
 
     if (n < size_of_field / 2)
     {
-        p->x = size_of_field / 4 - 1;
+        p->x = size_of_field / 4;
         p->y = n % (size_of_field / 4);
 
         return 0;
@@ -46,7 +47,7 @@ int Transform(int n, POINT *p)
     if (n < size_of_field / 4 * 3)
     {
         p->x = size_of_field / 4 - (n % (size_of_field / 4));
-        p->y = size_of_field / 4 - 1;
+        p->y = size_of_field / 4;
 
         return 0;
     }
@@ -60,6 +61,8 @@ int Transform(int n, POINT *p)
     }
 }
 
+
+
 void Paint(HDC hdc, WPARAM wParam, LPARAM lParam)
 {
     POINT point;
@@ -71,11 +74,16 @@ void Paint(HDC hdc, WPARAM wParam, LPARAM lParam)
       
     for (int i = 0; i < size_of_field; i++)
     {
-       
-
         Transform(field[i].get_number(), &point);
         point.x = point.x * scale + indent;
-        point.y = point.x * scale + indent;
+        point.y = point.y * scale + indent;
+
+        /*LPWSTR prn;
+        WCHAR wch[100];
+        wsprintf(wch, L"%d %d %d", point.x, point.y, field[i].get_number());
+        prn = (LPWSTR)wch;
+
+        TextOut(hdc, 100, 100 + i * 50, prn, wcslen(prn));*/
 
         PaintStart(hdc, &colorStart, &tobj, point, scale);
 
@@ -116,6 +124,15 @@ void Paint(HDC hdc, WPARAM wParam, LPARAM lParam)
             break;
         }
     }
+
+    for (int i = 0; i < count_of_players; i++)
+    {
+        Transform(players[i].get_position(), &point);
+        point.x = point.x * scale + indent + scale * i / count_of_players;
+        point.y = point.y * scale + indent;
+
+        PaintPlayer(hdc, &(players[i].color), &tobj, point, scale / count_of_players, i);
+    }
 }
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -127,6 +144,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: Разместите код здесь.
+    Init();
 
     // Инициализация глобальных строк
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -163,6 +181,11 @@ void Init() // определение начальных условий поля
         field[j].set_type_cell(rand() % 10);
         field[j].set_number(j);
     }
+
+    /*players[1].color = colorPlayer1;
+    players[2].color = colorPlayer2;
+    players[3].color = colorPlayer3;
+    players[4].color = colorPlayer4;*/ //пройтись forом
 }
 
 void Step() 
@@ -298,7 +321,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // Сохранить маркер экземпляра в глобальной переменной
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+      CW_USEDEFAULT, 0, scale * (size_of_field / 4 + 1) + indent * 2 + 15, scale * (size_of_field / 4 + 1) + indent * 2 + 50, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -307,8 +330,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
-
-   Init();
 
    return TRUE;
 }

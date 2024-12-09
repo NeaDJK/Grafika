@@ -29,7 +29,9 @@
 #endif
 #endif
 
-const int size_of_field = 20; //размер игрового поля
+
+
+const int size_of_field = 32; //размер игрового поля (% 4 == 0)
 const int count_of_fields = 5; //кол-во клеток в одном ряду
 const int size_of_input = 10; //размер вводимых команд
 const int max_players = 4; //максимальное кол-во игроков
@@ -49,3 +51,11 @@ const int type_not_prison = 2; //клетка выхода из тюрьмы
 const int type_bought = 1; //купленная клетка
 const int type_not_bought = 0; //не купленная клетка
 
+LPWSTR ToLPWSTR(int num)
+{
+    LPWSTR prn;
+    WCHAR wch[100];
+    wsprintf(wch, L"%d", num);
+    prn = (LPWSTR)wch;
+    return prn;
+}

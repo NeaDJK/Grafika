@@ -261,7 +261,7 @@ private:
     int own[100];
     int own_size;
     int position;
-
+     
     bool check_price(double price)
     {
         if (money >= price)
@@ -272,6 +272,7 @@ private:
     }
 
 public:
+    HGDIOBJ color;
     credit debt;
 
     player()
@@ -280,6 +281,7 @@ public:
         money = 200;
         own_size = 0;
         position = 0;
+        color = CreateSolidBrush(RGB(255, 255, 255));
     }
 
     void set_name(std::string nm)
@@ -311,7 +313,7 @@ public:
     {
         return position;
     }
-
+        
     int get_own_size()
     {
         return own_size;
