@@ -9,6 +9,7 @@ private:
     double price; //цена
     double tax; //налог 
     int type_cell; //тип клетки
+    int bought; // продается/не продается/продано
     int owner; //владелец
     
 
@@ -22,11 +23,12 @@ public:
         price = 100;
         tax = 10;
         type_cell = 0;
+        bought = 0;
         owner = 1;
     }
 
     //функция присвоения данных
-    void set(int num, std::string nm, std::string disc, double prc, double tx, int tpc, int own)
+    void set(int num, std::string nm, std::string disc, double prc, double tx, int tpc, int bg, int own)
     {
         number = num;
         name = nm;
@@ -34,6 +36,7 @@ public:
         price = prc;
         tax = tx;
         type_cell = tpc;
+        bought = bg;
         owner = own;
     }
 
@@ -60,6 +63,11 @@ public:
     void set_type_cell(char tpc)
     {
         type_cell = tpc;
+    }
+
+    void set_bought(int bg) 
+    {
+        bought = bg;
     }
 
     void set_owner(int own)
@@ -109,6 +117,11 @@ public:
         return owner;
     }
 
+    int is_bought()
+    {
+        return bought;
+    }
+
     //метод вывода всей информации
     void print_info()
     {
@@ -122,6 +135,27 @@ public:
     }
 
     //~cell();
+};
+
+class type_cell
+{
+public:
+    int number; //значение константы
+    int count; //кол-во клеток
+    TCHAR name[100]; //название типа клетки
+
+    type_cell() {
+        number = 0;
+        count = 40;
+        lstrcpyW(&name[0], L"Отдых");
+    }
+
+    void set_values(int num, int con, const TCHAR *nam)
+    {
+        number = num;
+        count = con;
+        lstrcpyW(&name[0], nam);
+    }
 };
 
 class credit
@@ -357,3 +391,4 @@ public:
         }
     }
 };
+
