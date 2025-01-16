@@ -22,8 +22,6 @@ HGDIOBJ colorOil = CreateSolidBrush(RGB(100, 50, 50));
 
 HGDIOBJ tobj = CreateFont(20, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, L"");
 
-
-
 HGDIOBJ colorPlayer0 = CreateSolidBrush(RGB(0, 0, 0));
 HGDIOBJ colorPlayer1 = CreateSolidBrush(RGB(255, 0, 0));
 HGDIOBJ colorPlayer2 = CreateSolidBrush(RGB(255, 255, 0));

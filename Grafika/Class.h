@@ -4,8 +4,8 @@ class cell
 {
 private:
     int number; //порядковый номер поля
-    std::string name; //название
-    std::string discription; //описание клетки
+    std::wstring name; //название
+    std::wstring discription; //описание клетки
     double price; //цена
     double tax; //налог 
     int type_cell; //тип клетки
@@ -18,8 +18,8 @@ public:
     cell()
     {
         number = 1;
-        name = "Китай-Город";
-        discription = "станция метро";
+        name = L"Китай-Город";
+        discription = L"станция метро";
         price = 100;
         tax = 10;
         type_cell = 0;
@@ -28,7 +28,7 @@ public:
     }
 
     //функция присвоения данных
-    void set(int num, std::string nm, std::string disc, double prc, double tx, int tpc, int bg, int own)
+    void set(int num, std::wstring nm, std::wstring disc, double prc, double tx, int tpc, int bg, int own)
     {
         number = num;
         name = nm;
@@ -45,7 +45,7 @@ public:
         number = num;
     }
 
-    void set_bame(std::string nm)
+    void set_bame(std::wstring nm)
     {
         name = nm;
     }
@@ -76,7 +76,7 @@ public:
     }
 
     //функция для добавления описания
-    void set_discription(std::string disc)
+    void set_discription(std::wstring disc)
     {
         discription = disc;
     }
@@ -87,12 +87,12 @@ public:
         return number;
     }
 
-    std::string get_name()
+    std::wstring get_name()
     {
         return name;
     }
 
-    std::string get_discription()
+    std::wstring get_discription()
     {
         return discription;
     }
@@ -123,7 +123,7 @@ public:
     }
 
     //метод вывода всей информации
-    void print_info()
+    /*void print_info()
     {
         std::cout << "Название: " << name << std::endl;
         std::cout << "Описание: " << discription << std::endl;
@@ -132,7 +132,7 @@ public:
         std::cout << "Тип клетки: " << type_cell << std::endl;
         std::cout << "Номер клетки: " << number << std::endl;
 
-    }
+    }*/
 
     //~cell();
 };
@@ -168,8 +168,11 @@ private:
     int type_of_credit;
     double payment;
     int current_circle;
+    
 
 public:
+    TCHAR buffer[size_of_buffer];
+
     credit()
     {
         sum = 0;
@@ -180,6 +183,21 @@ public:
         payment = 0;
         current_circle = 0;
     }
+
+    /*void update_info()
+    {
+        if (type_of_credit == 0)
+        {
+            lstrcpyW(&type_of_credit_str[0], L"аннуитетный");
+            lstrcpyW(&payment_str[0], L"Платеж: ");
+        }
+
+        else
+        {
+            lstrcpyW(&type_of_credit_str[0], L"дифференцированный");
+            lstrcpyW(&payment_str[0], L"Первый платеж: ");
+        }
+    }*/
 
     void end_credit()
     {
@@ -238,35 +256,48 @@ public:
 
     void info_credit(int num = -1)
     {
+        swprintf(&buffer[0], size_of_buffer, L"");
+
         if (num != -1)
         {
-            std::cout << "Схема номер " << num << std::endl;
+            //std::cout << "Схема номер " << num << std::endl;
+            swprintf(&buffer[_tcslen(buffer)], size_of_buffer, L"Схема номер %d \n", num);
+
         }
 
         if (type_of_credit == 0)
         {
-            std::cout << "Форма платежа - " << "аннуитетная" << std::endl;
-
+            //std::cout << "Форма платежа - " << "аннуитетная" << std::endl;
+            swprintf(&buffer[_tcslen(buffer)], size_of_buffer, L"Форма платежа: аннуитетная \n");
         }
         else
         {
-            std::cout << "Форма платежа - " << "дифференцированная" << std::endl;
+            //std::cout << "Форма платежа - " << "дифференцированная" << std::endl;
+            swprintf(&buffer[_tcslen(buffer)], size_of_buffer, L"Форма платежа: дифференцированная \n");
         }
 
-        std::cout << "Сумма - " << sum << std::endl << \
+        //std::cout << "Сумма - " << sum << std::endl << \
             "Срок кредита - " << count_of_steps << std::endl << \
             "Процент - " << percent << std::endl;
+        swprintf(&buffer[_tcslen(buffer)], size_of_buffer, L"Сумма: %d \nСрок кредита: %d \nПроцент: %d \n", sum, count_of_steps, percent);
 
         if (type_of_credit == 0)
         {
-            std::cout << "Платеж - " << payment << std::endl;
+            //std::cout << "Платеж - " << payment << std::endl;
+            swprintf(&buffer[_tcslen(buffer)], size_of_buffer, L"Платеж: %8.2f \n", payment);
         }
         else
         {
-            std::cout << "Первый платеж - " << payment << std::endl;
+            //std::cout << "Первый платеж - " << payment << std::endl;
+            swprintf(&buffer[_tcslen(buffer)], size_of_buffer, L"Первый платеж: %8.2f \n", payment);
             current_payment(count_of_steps);
-            std::cout << "Последний платеж - " << payment << std::endl;
+                      
+
+            //std::cout << "Последний платеж - " << payment << std::endl;
+            swprintf(&buffer[_tcslen(buffer)], size_of_buffer, L"Последний платеж: %8.2f \n", payment);
             current_payment();
+
+            
         }
 
     }
@@ -290,7 +321,7 @@ public:
 class player
 {
 private:
-    std::string name;
+    std::wstring name;
     double money;
     int own[100];
     int own_size;
@@ -311,14 +342,14 @@ public:
 
     player()
     {
-        name = "Player";
+        name = L"Player";
         money = 200;
         own_size = 0;
         position = 0;
         color = CreateSolidBrush(RGB(255, 255, 255));
     }
 
-    void set_name(std::string nm)
+    void set_name(std::wstring nm)
     {
         name = nm;
     }
@@ -333,7 +364,7 @@ public:
         position = pos;
     }
 
-    std::string get_name()
+    std::wstring get_name()
     {
         return name;
     }
@@ -380,7 +411,7 @@ public:
 
     void print_info()
     {
-        std::cout << "Имя пользователя: " << name << std::endl;
+        /*std::cout << "Имя пользователя: " << name << std::endl;
         std::cout << "Баланс: " << money << std::endl;
         std::cout << "Позиция: " << position << std::endl;
         std::cout << "Во владении: " << own_size << std::endl;
@@ -388,7 +419,7 @@ public:
         for (int i = 0; i < own_size; i++)
         {
             std::cout << "Владение номер " << i + 1 << ": " << own[i] << std::endl;
-        }
+        }*/
     }
 };
 
