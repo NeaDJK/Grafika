@@ -348,6 +348,8 @@ void Step()
 	current_position = current_position % (size_of_field);
 	players[current_player].set_position(current_position);
 
+
+
 	switch (field[current_position].is_bought())
 	{
 	case type_bought:
@@ -424,7 +426,7 @@ void GetCredit(int value)
 	{
 		if (players[current_player].debt.get_sum() == 0)
 		{
-			std::cout << "Выберите схему кредита:" << std::endl;
+			/*std::cout << "Выберите схему кредита:" << std::endl;
 
 			credit cr[count_of_credit_plans];
 
@@ -433,10 +435,12 @@ void GetCredit(int value)
 			{
 				cr[i].new_credit();
 				cr[i].info_credit(i + 1);
-			}
+			}*/
 
 			players[current_player].add_money(cr[value - 1].get_sum());
 			players[current_player].debt = cr[value - 1];
+
+			swprintf(&info_buffer[0], size_of_buffer, L"Кредит %d выдан!", value);
 
 			/*char input[100]; std::cin >> input;
 
@@ -452,12 +456,17 @@ void GetCredit(int value)
 				std::cout << "Некорректный ввод!" << std::endl;*/
 		}
 
-		else
-			std::cout << "С тебя хватит" << std::endl;
+		//else
+		//	//std::cout << "С тебя хватит" << std::endl;		
 	}
 
-	else
-		std::cout << "Денег нет, но вы держитесь..." << std::endl;
+	/*else
+		std::cout << "Денег нет, но вы держитесь..." << std::endl;*/
+}
+
+void Education() 
+{
+	swprintf(&info_buffer[0], size_of_buffer, L"Включен режим обучения. \nВыберите из списка доступные подсказки.");
 }
 
 
@@ -514,12 +523,17 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	info_button[5] = CreateWindowW(L"button", L"Игрок", WS_VISIBLE | WS_CHILD, indent + scale * 5, indent + scale * 7, 100, 30, hWnd, (HMENU)(1001 + 6), hInstance, NULL);
 		
 	HWND credit_button[5];
-	credit_button[0] = CreateWindowW(L"button", L"1", WS_VISIBLE | WS_CHILD, indent * 4 + scale + 1000, indent + scale * 6.5, 100, 30, hWnd, (HMENU)(3001 + 1), hInstance, NULL);
-	credit_button[1] = CreateWindowW(L"button", L"2", WS_VISIBLE | WS_CHILD, indent * 4 + scale * 2 + 1000, indent + scale * 6.5, 100, 30, hWnd, (HMENU)(3001 + 2), hInstance, NULL);
-	credit_button[2] = CreateWindowW(L"button", L"3", WS_VISIBLE | WS_CHILD, indent * 4 + scale * 3 + 1000, indent + scale * 6.5, 100, 30, hWnd, (HMENU)(3001 + 3), hInstance, NULL);
-	credit_button[3] = CreateWindowW(L"button", L"4", WS_VISIBLE | WS_CHILD, indent * 4 + scale * 4 + 1000, indent + scale * 6.5, 100, 30, hWnd, (HMENU)(3001 + 4), hInstance, NULL);
-	credit_button[4] = CreateWindowW(L"button", L"5", WS_VISIBLE | WS_CHILD, indent * 4 + scale * 5 + 1000, indent + scale * 6.5, 100, 30, hWnd, (HMENU)(3001 + 5), hInstance, NULL);
+	credit_button[0] = CreateWindowW(L"button", L"1", WS_VISIBLE | WS_CHILD, indent + scale * 2, indent + scale * 1.5, scale, scale / 3, hWnd, (HMENU)(3001 + 1), hInstance, NULL);
+	credit_button[1] = CreateWindowW(L"button", L"2", WS_VISIBLE | WS_CHILD, indent + scale * 3, indent + scale * 1.5, scale, scale / 3, hWnd, (HMENU)(3001 + 2), hInstance, NULL);
+	credit_button[2] = CreateWindowW(L"button", L"3", WS_VISIBLE | WS_CHILD, indent + scale * 4, indent + scale * 1.5, scale, scale / 3, hWnd, (HMENU)(3001 + 3), hInstance, NULL);
+	credit_button[3] = CreateWindowW(L"button", L"4", WS_VISIBLE | WS_CHILD, indent + scale * 5, indent + scale * 1.5, scale, scale / 3, hWnd, (HMENU)(3001 + 4), hInstance, NULL);
+	credit_button[4] = CreateWindowW(L"button", L"5", WS_VISIBLE | WS_CHILD, indent + scale * 6, indent + scale * 1.5, scale, scale / 3, hWnd, (HMENU)(3001 + 5), hInstance, NULL);
 
+	HWND education_button[10];
+	education_button[0] = CreateWindowW(L"button", L"Обучение", WS_VISIBLE | WS_CHILD, indent + scale * 2, indent + scale * 1, scale, scale / 3, hWnd, (HMENU)(4001 + 1), hInstance, NULL);
+	education_button[1] = CreateWindowW(L"button", L"Кредит", WS_VISIBLE | WS_CHILD, indent + scale * 3, indent + scale * 1, scale, scale / 3, hWnd, (HMENU)(4001 + 2), hInstance, NULL);
+	education_button[2] = CreateWindowW(L"button", L"Покупка/продажа", WS_VISIBLE | WS_CHILD, indent + scale * 4, indent + scale * 1, scale, scale / 3, hWnd, (HMENU)(4001 + 3), hInstance, NULL);
+	education_button[3] = CreateWindowW(L"button", L"Инфляция", WS_VISIBLE | WS_CHILD, indent + scale * 5, indent + scale * 1, scale, scale / 3, hWnd, (HMENU)(4001 + 4), hInstance, NULL);
 
 	if (!hWnd)
 	{
@@ -574,7 +588,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		case 3001 + 1:
-
+			GetCredit(1);
+			SetWindowTextW(info_dialog, &info_buffer[0]);
+			break;
+		case 3001 + 2:
+			GetCredit(2);
+			SetWindowTextW(info_dialog, &info_buffer[0]);
+			break;
+		case 3001 + 3:
+			GetCredit(3);
+			SetWindowTextW(info_dialog, &info_buffer[0]);
+			break;
+		case 3001 + 4:
+			GetCredit(4);
+			SetWindowTextW(info_dialog, &info_buffer[0]);
+			break;
+		case 3001 + 5:
+			GetCredit(5);
+			SetWindowTextW(info_dialog, &info_buffer[0]);
+			break;
+		case 4001 + 1:
+			Education();
+			SetWindowTextW(info_dialog, &info_buffer[0]);
+			break;
 		case IDM_ABOUT:
 			//DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 			Step();
