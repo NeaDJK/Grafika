@@ -11,6 +11,8 @@ private:
     int type_cell; //тип клетки
     int bought; // продается/не продается/продано
     int owner; //владелец
+
+    int file_number; //номер в файле
     
 
 public:
@@ -156,6 +158,8 @@ public:
         count = con;
         lstrcpyW(&name[0], nam);
     }
+
+    
 };
 
 class credit

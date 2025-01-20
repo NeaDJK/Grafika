@@ -240,6 +240,18 @@ void InitField()
 	type_field[11].set_values(type_gas, count_of_res, &name_gas[0]);
 }
 
+int GetTypeField(TCHAR str[100])
+{
+	for (int i = 0; i < count_of_types_cells; i++)
+	{
+		if (_tcscmp(type_field[i].name, str) == 0)
+		{
+			return type_field[i].number;
+		}
+	}
+
+	return -1;
+}
 
 void Init() // определение начальных условий поля
 {
@@ -254,6 +266,21 @@ void Init() // определение начальных условий поля
 	field[0].set_number(0);
 	temp[0].count = 0;
 
+	std::wfstream fin;
+	int file_num;
+	WCHAR file_str[100];
+	std::wstring file_name;
+	std::wstring file_dscp;
+
+	int count;
+
+	fin.open("fuel.dat", std::ios::in);
+
+	if (fin.is_open())
+	{				
+		fin >> count;
+	}
+
 	for (int j = 1; j < size_of_field; j++)
 	{
 		int flag = 1;
@@ -266,6 +293,14 @@ void Init() // определение начальных условий поля
 			{
 				field[j].set_type_cell(temp[rc].number);
 				field[j].set_number(j);
+
+				if (fin.is_open())
+				{
+					/*fin >> file_num;
+					fin.getline(&file_str[0]);
+					fin >> file_name;
+					fin >> file_dscp;*/
+				}
 
 				temp[rc].count--;
 
@@ -297,17 +332,8 @@ void Init() // определение начальных условий поля
 		players[i].color = colorPlayer[i];
 	}
 
-
-
-	std::fstream fin;
-
-	fin.open("fuel.dat", std::ios::in);
-
 	if (fin.is_open())
 	{
-		int count;
-		fin >> count;
-
 		fin.close();
 	}
 }
@@ -322,11 +348,24 @@ void PrintPlayerInfo(player* pl)
 {
 	swprintf(&info_buffer[0], size_of_buffer, L"Имя пользователя: %s \nБаланс: %8.2f \nПозиция: %d \nВо владении: %d \n",
 		(pl->get_name()).c_str(), pl->get_money(), pl->get_position(), pl->get_own_size());
-	/*for (int i = 0; i < own_size; i++)
+	
+	/*for (int i = 0; i < pl->get_own_size(); i++)
 	{
-		std::cout << "Владение номер " << i + 1 << ": " << own[i] << std::endl;
+		std::cout << "Владение номер " << i + 1 << ": " <<  << std::endl;
 
 	}*/
+
+	if (pl->debt.get_sum() == 0)
+	{
+		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"Кредитов нет. \n");
+	}
+
+	else
+	{
+		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nИнформация по кредиту: \n");
+		pl->debt.info_credit();
+		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, pl->debt.buffer);
+	}
 }
 
 void Step()
@@ -392,7 +431,7 @@ void Buy()
 
 void PrintCreditPlans() 
 {
-	if (field[players[current_player].get_position()].get_type_cell() == type_bank)
+	//if (field[players[current_player].get_position()].get_type_cell() == type_bank)
 	{
 		if (players[current_player].debt.get_sum() == 0)
 		{
@@ -416,13 +455,13 @@ void PrintCreditPlans()
 			
 	}
 
-	else
-		swprintf(&info_buffer[0], size_of_buffer, L"Здесь кредит не выдают!");
+	//else
+		//swprintf(&info_buffer[0], size_of_buffer, L"Здесь кредит не выдают!");
 }
 
 void GetCredit(int value)
 {
-	if (field[players[current_player].get_position()].get_type_cell() == type_bank)
+	//if (field[players[current_player].get_position()].get_type_cell() == type_bank)
 	{
 		if (players[current_player].debt.get_sum() == 0)
 		{
