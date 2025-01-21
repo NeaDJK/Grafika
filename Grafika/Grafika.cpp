@@ -338,37 +338,37 @@ void Init() // определение начальных условий поля
 	}
 }
 
-void PrintCellInfo(cell* cl)
-{
-	swprintf(&info_buffer[0], size_of_buffer, L"Название: %s \nОписание: %s \nЦена: %8.2f \nНалог: %8.2f \nТип клетки: %d \nНомер клетки: %d \nВладелец: %d \n",
-		(cl->get_name()).c_str(), (cl->get_discription()).c_str(), cl->get_price(), cl->get_tax(), cl->get_type_cell(), cl->get_number(), cl->get_owner());
-}
+//void PrintCellInfo(cell* cl)
+//{
+//	swprintf(&info_buffer[0], size_of_buffer, L"Название: %s \nОписание: %s \nЦена: %8.2f \nНалог: %8.2f \nТип клетки: %d \nНомер клетки: %d \nВладелец: %d \n",
+//		(cl->get_name()).c_str(), (cl->get_discription()).c_str(), cl->get_price(), cl->get_tax(), cl->get_type_cell(), cl->get_number(), cl->get_owner());
+//}
+//
+//void PrintPlayerInfo(player* pl)
+//{
+//	swprintf(&info_buffer[0], size_of_buffer, L"Имя пользователя: %s \nБаланс: %8.2f \nПозиция: %d \nВо владении: %d \n",
+//		(pl->get_name()).c_str(), pl->get_money(), pl->get_position(), pl->get_own_size());
+//	
+//	/*for (int i = 0; i < pl->get_own_size(); i++)
+//	{
+//		std::cout << "Владение номер " << i + 1 << ": " <<  << std::endl;
+//
+//	}*/
+//
+//	if (pl->debt.get_sum() == 0)
+//	{
+//		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"Кредитов нет. \n");
+//	}
+//
+//	else
+//	{
+//		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nИнформация по кредиту: \n");
+//		pl->debt.info_credit();
+//		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, pl->debt.buffer);
+//	}
+//}
 
-void PrintPlayerInfo(player* pl)
-{
-	swprintf(&info_buffer[0], size_of_buffer, L"Имя пользователя: %s \nБаланс: %8.2f \nПозиция: %d \nВо владении: %d \n",
-		(pl->get_name()).c_str(), pl->get_money(), pl->get_position(), pl->get_own_size());
-	
-	/*for (int i = 0; i < pl->get_own_size(); i++)
-	{
-		std::cout << "Владение номер " << i + 1 << ": " <<  << std::endl;
-
-	}*/
-
-	if (pl->debt.get_sum() == 0)
-	{
-		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"Кредитов нет. \n");
-	}
-
-	else
-	{
-		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nИнформация по кредиту: \n");
-		pl->debt.info_credit();
-		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, pl->debt.buffer);
-	}
-}
-
-void Step()
+void Step(cell* cl)
 {
 	current_player = (current_player + 1) % (count_of_players);
 	cube = rand() % 12 + 1;
@@ -387,8 +387,6 @@ void Step()
 	current_position = current_position % (size_of_field);
 	players[current_player].set_position(current_position);
 
-
-
 	switch (field[current_position].is_bought())
 	{
 	case type_bought:
@@ -403,6 +401,23 @@ void Step()
 	default:
 		break;
 	}
+
+	swprintf(&info_buffer[0], size_of_buffer, L"%d игрок перемещается на %d клеток \nБаланс: % 8.2f \nПозиция : % d \n", current_player, cube, players[current_player].get_money(), players[current_player].get_position());
+
+	if (players[current_player].debt.get_sum() == 0)
+	{
+		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"Кредитов нет. \n");
+	}
+
+	else
+	{
+		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nИнформация по кредиту: \n");
+		players[current_player].debt.info_credit();
+		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, players[current_player].debt.buffer);
+	}
+
+	swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nНазвание: %s \nОписание: %s \nЦена: %8.2f \nНалог: %8.2f \nТип клетки: %d \nНомер клетки: %d \nВладелец: %d \n",
+		(cl->get_name()).c_str(), (cl->get_discription()).c_str(), cl->get_price(), cl->get_tax(), cl->get_type_cell(), cl->get_number(), cl->get_owner());
 }
 
 void Buy()
@@ -503,9 +518,20 @@ void GetCredit(int value)
 		std::cout << "Денег нет, но вы держитесь..." << std::endl;*/
 }
 
-void Education() 
+void Education(int ed_id) 
 {
-	swprintf(&info_buffer[0], size_of_buffer, L"Включен режим обучения. \nВыберите из списка доступные подсказки.");
+	switch (ed_id)
+	{
+	case educ_cr_id:
+		swprintf(&info_buffer[0], size_of_buffer, L"Кредит — это предоставление денежных средств или иных ресурсов кредитором заёмщику во временное пользование. \n \nЧтобы взять кредит, нажмите кнопку 'Кредит', находясь на клетке банка. Далее выберите с помощью соответсующих кнопок интересующую Вас схему кредита. Кредит постепенно выплачивается автоматически, при прохождении через клетку 'Старт'.");
+		break;
+	case educ_infl_id:
+		swprintf(&info_buffer[0], size_of_buffer, L"Инфляция — это темп устойчивого повышения общего уровня цен на товары и услуги за определённый промежуток времени, а также степень обесценивания денег. \n");
+		break;
+	default:
+		break;
+	}
+	
 }
 
 
@@ -558,8 +584,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	info_button[1] = CreateWindowW(L"button", L"Кредит", WS_VISIBLE | WS_CHILD, indent + scale * 4, indent + scale * 7.5, 100, 30, hWnd, (HMENU)(1001 + 2), hInstance, NULL);
 	info_button[2] = CreateWindowW(L"button", L"Купить", WS_VISIBLE | WS_CHILD, indent * 3 + scale * 5, indent + scale * 7.5, 100, 30, hWnd, (HMENU)(1001 + 3), hInstance, NULL);
 	info_button[3] = CreateWindowW(L"button", L"Продать (?)", WS_VISIBLE | WS_CHILD, indent + scale * 4, indent + scale * 6.5, 100, 30, hWnd, (HMENU)(1001 + 4), hInstance, NULL);
-	info_button[4] = CreateWindowW(L"button", L"Инфо", WS_VISIBLE | WS_CHILD, indent + scale * 3, indent + scale * 7, 100, 30, hWnd, (HMENU)(1001 + 5), hInstance, NULL);
-	info_button[5] = CreateWindowW(L"button", L"Игрок", WS_VISIBLE | WS_CHILD, indent + scale * 5, indent + scale * 7, 100, 30, hWnd, (HMENU)(1001 + 6), hInstance, NULL);
+	//info_button[4] = CreateWindowW(L"button", L"Инфо", WS_VISIBLE | WS_CHILD, indent + scale * 3, indent + scale * 7, 100, 30, hWnd, (HMENU)(1001 + 5), hInstance, NULL);
+	//info_button[5] = CreateWindowW(L"button", L"Игрок", WS_VISIBLE | WS_CHILD, indent + scale * 5, indent + scale * 7, 100, 30, hWnd, (HMENU)(1001 + 6), hInstance, NULL);
 		
 	HWND credit_button[5];
 	credit_button[0] = CreateWindowW(L"button", L"1", WS_VISIBLE | WS_CHILD, indent + scale * 2, indent + scale * 1.5, scale, scale / 3, hWnd, (HMENU)(3001 + 1), hInstance, NULL);
@@ -569,11 +595,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	credit_button[4] = CreateWindowW(L"button", L"5", WS_VISIBLE | WS_CHILD, indent + scale * 6, indent + scale * 1.5, scale, scale / 3, hWnd, (HMENU)(3001 + 5), hInstance, NULL);
 
 	HWND education_button[10];
-	education_button[0] = CreateWindowW(L"button", L"Обучение", WS_VISIBLE | WS_CHILD, indent + scale * 2, indent + scale * 1, scale, scale / 3, hWnd, (HMENU)(4001 + 1), hInstance, NULL);
-	education_button[1] = CreateWindowW(L"button", L"Кредит", WS_VISIBLE | WS_CHILD, indent + scale * 3, indent + scale * 1, scale, scale / 3, hWnd, (HMENU)(4001 + 2), hInstance, NULL);
-	education_button[2] = CreateWindowW(L"button", L"Покупка/продажа", WS_VISIBLE | WS_CHILD, indent + scale * 4, indent + scale * 1, scale, scale / 3, hWnd, (HMENU)(4001 + 3), hInstance, NULL);
-	education_button[3] = CreateWindowW(L"button", L"Инфляция", WS_VISIBLE | WS_CHILD, indent + scale * 5, indent + scale * 1, scale, scale / 3, hWnd, (HMENU)(4001 + 4), hInstance, NULL);
-
+	education_button[0] = CreateWindowW(L"button", L"Кредит", WS_VISIBLE | WS_CHILD, indent + scale, indent + scale * 2, scale, scale / 3, hWnd, (HMENU)(4001 + 1), hInstance, NULL);
+	education_button[1] = CreateWindowW(L"button", L"Инфляция", WS_VISIBLE | WS_CHILD, indent + scale, indent + scale * 2.5, scale, scale / 3, hWnd, (HMENU)(4001 + 2), hInstance, NULL);
+	
 	if (!hWnd)
 	{
 		return FALSE;
@@ -607,7 +631,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wmId)
 		{
 		case 1001 + 1:
-			Step();
+			Step(&field[0]);
+			SetWindowTextW(info_dialog, &info_buffer[0]);
 			InvalidateRect(hWnd, NULL, false);
 			break;
 		case 1001 + 2:
@@ -619,11 +644,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		case 1001 + 5:
-			PrintCellInfo(&field[0]);
+			//PrintCellInfo(&field[0]);
 			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		case 1001 + 6:
-			PrintPlayerInfo(&players[0]);
+			//PrintPlayerInfo(&players[0]);
 			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		case 3001 + 1:
@@ -647,12 +672,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		case 4001 + 1:
-			Education();
+			Education(educ_cr_id);
+			SetWindowTextW(info_dialog, &info_buffer[0]);
+			break;
+		case 4001 + 2:
+			Education(educ_infl_id);
 			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		case IDM_ABOUT:
 			//DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-			Step();
+			Step(&field[0]);
 			break;
 		case IDM_EXIT:
 			DestroyWindow(hWnd);

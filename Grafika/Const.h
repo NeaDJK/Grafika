@@ -54,4 +54,5 @@ const TCHAR name_oil[] = L"Нефть";
 const TCHAR name_salt[] = L"Соль";
 
 
-   
+const int educ_cr_id = 1;
+const int educ_infl_id = 2;
