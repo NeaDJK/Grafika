@@ -6,6 +6,8 @@
 #include "Class.h"
 #include "Const.h"
 #include <fstream>
+#include <iostream>
+#include <string>
 
 #define MAX_LOADSTRING 100
 
@@ -24,6 +26,10 @@ int cube;                                       //результат броск�
 int current_position;
 int current_player = -1;
 HGDIOBJ colorPlayer[max_players];
+
+double infl;
+
+int rand_chance;
 
 HWND hWnd;
 HWND info_dialog;
@@ -78,10 +84,17 @@ int Transform(int n, POINT* p)
 	}
 }
 
-void ToLPWSTR(int num, LPWSTR* njn)
+void Chance() 
 {
+	rand_chance = rand() % 10;
 
+	switch (rand_chance)
+	{
+	case 1:
 
+	default:
+		break;
+	}
 }
 
 void Paint(HDC hdc, WPARAM wParam, LPARAM lParam)
@@ -255,6 +268,7 @@ int GetTypeField(TCHAR str[100])
 
 void Init() // определение начальных условий поля
 {
+	infl = 1;
 	InitField();
 	type_cell temp[count_of_types_cells];
 	for (size_t i = 0; i < count_of_types_cells; i++)
@@ -273,13 +287,23 @@ void Init() // определение начальных условий поля
 	std::wstring file_dscp;
 
 	int count;
-
+	fin.open("fuel2.dat", std::ios::out);
+	fin << 5 << "sdpofspodf" << L"sdpofspodf" << "ылвиашщывра" ;
+	fin.close();
 	fin.open("fuel.dat", std::ios::in);
 
 	if (fin.is_open())
 	{				
-		fin >> count;
+		//fin >> count;
+		fin >> file_num;
+		swprintf(&info_buffer[0], size_of_buffer, L"%d ", file_num);
+		fin.getline(&file_str[0], 100);
+		std::getline(fin, file_name);
+		std::getline(fin, file_dscp);
+
+		//swprintf(&info_buffer[0], size_of_buffer, L"%d \n%s \n%s \n%s", file_num, file_str, file_name, file_dscp);
 	}
+		
 
 	for (int j = 1; j < size_of_field; j++)
 	{
@@ -296,10 +320,12 @@ void Init() // определение начальных условий поля
 
 				if (fin.is_open())
 				{
-					/*fin >> file_num;
-					fin.getline(&file_str[0]);
-					fin >> file_name;
-					fin >> file_dscp;*/
+					fin >> file_num;
+					fin.getline(&file_str[0], 100);
+					std::getline(fin, file_name);
+					std::getline(fin, file_dscp);
+
+					//swprintf(&info_buffer[0], size_of_buffer, L"%d \n%s \n%s \n%s", file_num, file_str, file_name, file_dscp);
 				}
 
 				temp[rc].count--;
@@ -368,7 +394,7 @@ void Init() // определение начальных условий поля
 //	}
 //}
 
-void Step(cell* cl)
+void Step()
 {
 	current_player = (current_player + 1) % (count_of_players);
 	cube = rand() % 12 + 1;
@@ -402,7 +428,7 @@ void Step(cell* cl)
 		break;
 	}
 
-	swprintf(&info_buffer[0], size_of_buffer, L"%d игрок перемещается на %d клеток \nБаланс: % 8.2f \nПозиция : % d \n", current_player, cube, players[current_player].get_money(), players[current_player].get_position());
+	swprintf(&info_buffer[0], size_of_buffer, L"Игрок %s перемещается на %d клеток \nБаланс: % 8.2f \nПозиция : % d \n", (players[current_player].get_name()).c_str(), cube, players[current_player].get_money(), players[current_player].get_position());
 
 	if (players[current_player].debt.get_sum() == 0)
 	{
@@ -417,7 +443,7 @@ void Step(cell* cl)
 	}
 
 	swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nНазвание: %s \nОписание: %s \nЦена: %8.2f \nНалог: %8.2f \nТип клетки: %d \nНомер клетки: %d \nВладелец: %d \n",
-		(cl->get_name()).c_str(), (cl->get_discription()).c_str(), cl->get_price(), cl->get_tax(), cl->get_type_cell(), cl->get_number(), cl->get_owner());
+		(field[current_position].get_name()).c_str(), (field[current_position].get_discription()).c_str(), field[current_position].get_price(), field[current_position].get_tax(), field[current_position].get_type_cell(), field[current_position].get_number(), field[current_position].get_owner());
 }
 
 void Buy()
@@ -446,7 +472,7 @@ void Buy()
 
 void PrintCreditPlans() 
 {
-	//if (field[players[current_player].get_position()].get_type_cell() == type_bank)
+	if (field[players[current_player].get_position()].get_type_cell() == type_bank)
 	{
 		if (players[current_player].debt.get_sum() == 0)
 		{
@@ -470,13 +496,13 @@ void PrintCreditPlans()
 			
 	}
 
-	//else
-		//swprintf(&info_buffer[0], size_of_buffer, L"Здесь кредит не выдают!");
+	else
+		swprintf(&info_buffer[0], size_of_buffer, L"Здесь кредит не выдают!");
 }
 
 void GetCredit(int value)
 {
-	//if (field[players[current_player].get_position()].get_type_cell() == type_bank)
+	if (field[players[current_player].get_position()].get_type_cell() == type_bank)
 	{
 		if (players[current_player].debt.get_sum() == 0)
 		{
@@ -514,8 +540,8 @@ void GetCredit(int value)
 		//	//std::cout << "С тебя хватит" << std::endl;		
 	}
 
-	/*else
-		std::cout << "Денег нет, но вы держитесь..." << std::endl;*/
+	else
+		std::cout << "Денег нет, но вы держитесь..." << std::endl;
 }
 
 void Rules(int rl_id)
@@ -646,7 +672,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wmId)
 		{
 		case 1001 + 1:
-			Step(&field[0]);
+			Step();
 			SetWindowTextW(info_dialog, &info_buffer[0]);
 			InvalidateRect(hWnd, NULL, false);
 			break;
@@ -700,7 +726,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case IDM_ABOUT:
 			//DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-			Step(&field[0]);
+			//Step();
 			break;
 		case IDM_EXIT:
 			DestroyWindow(hWnd);

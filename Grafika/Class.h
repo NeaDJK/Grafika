@@ -7,7 +7,9 @@ private:
     std::wstring name; //название
     std::wstring discription; //описание клетки
     double price; //цена
-    double tax; //налог 
+    double def_price;
+    double tax; //налог
+    double def_tax;
     int type_cell; //тип клетки
     int bought; // продаетс€/не продаетс€/продано
     int owner; //владелец
@@ -23,10 +25,12 @@ public:
         name = L" итай-√ород";
         discription = L"станци€ метро";
         price = 100;
+        def_price = price;
         tax = 10;
+        def_tax = tax;
         type_cell = 0;
         bought = 0;
-        owner = 1;
+        owner = 0;
     }
 
     //функци€ присвоени€ данных
@@ -36,7 +40,9 @@ public:
         name = nm;
         discription = disc;
         price = prc;
+        def_price = prc;
         tax = tx;
+        def_tax = tx;
         type_cell = tpc;
         bought = bg;
         owner = own;
