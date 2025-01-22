@@ -56,3 +56,7 @@ const TCHAR name_salt[] = L"Соль";
 
 const int educ_cr_id = 1;
 const int educ_infl_id = 2;
+
+
+const int rule_step_id = 1;
+const int rule_sb_id = 2;

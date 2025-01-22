@@ -518,6 +518,18 @@ void GetCredit(int value)
 		std::cout << "Денег нет, но вы держитесь..." << std::endl;*/
 }
 
+void Rules(int rl_id)
+{
+	switch (rl_id)
+	{
+	case rule_step_id:
+		swprintf(&info_buffer[0], size_of_buffer, L"Ход - основное действие в игре. Для того, чтобы передать ход следующему игроку, нажмите кнопку 'Бросок'. После этого выпадет случайное число от 2 до 12 и фишка игрока переместится на указанное количество клеток. Также ниже выведется вся информация об игроке и клетке, на которой он находится. \n");
+		break;
+	default:
+		break;
+	}
+}
+
 void Education(int ed_id) 
 {
 	switch (ed_id)
@@ -598,6 +610,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	education_button[0] = CreateWindowW(L"button", L"Кредит", WS_VISIBLE | WS_CHILD, indent + scale, indent + scale * 2, scale, scale / 3, hWnd, (HMENU)(4001 + 1), hInstance, NULL);
 	education_button[1] = CreateWindowW(L"button", L"Инфляция", WS_VISIBLE | WS_CHILD, indent + scale, indent + scale * 2.5, scale, scale / 3, hWnd, (HMENU)(4001 + 2), hInstance, NULL);
 	
+	HWND rule_button[10];
+	rule_button[0] = CreateWindowW(L"button", L"Ход", WS_VISIBLE | WS_CHILD, indent + scale * 7, indent + scale * 2, scale, scale / 3, hWnd, (HMENU)(5001 + 1), hInstance, NULL);
+
 	if (!hWnd)
 	{
 		return FALSE;
@@ -677,6 +692,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case 4001 + 2:
 			Education(educ_infl_id);
+			SetWindowTextW(info_dialog, &info_buffer[0]);
+			break;
+		case 5001 + 1:
+			Rules(rule_step_id);
 			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		case IDM_ABOUT:
