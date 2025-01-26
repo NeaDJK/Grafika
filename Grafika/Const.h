@@ -60,3 +60,6 @@ const int educ_infl_id = 2;
 
 const int rule_step_id = 1;
 const int rule_sb_id = 2;
+
+
+const int chance_ext_id = 1;

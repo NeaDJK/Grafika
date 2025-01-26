@@ -84,14 +84,20 @@ int Transform(int n, POINT* p)
 	}
 }
 
+void RandExcise() 
+{
+	int rand_cells = rand() % count_of;
+
+}
+
 void Chance() 
 {
 	rand_chance = rand() % 10;
 
 	switch (rand_chance)
 	{
-	case 1:
-
+	case chance_ext_id:
+		
 	default:
 		break;
 	}
