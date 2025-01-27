@@ -9,6 +9,7 @@ const int money_for_circle = 200; //деньги за круг
 
 const int size_of_price = 100;
 const int size_of_buffer = 10000;
+const int size_of_wchar = 10000;
 
 /*const char string_exit[] = "exit"; //команда выхода из программы
 const char step[] = "cube"; //команда броска кубика
@@ -40,18 +41,18 @@ const int type_coal = 105;
 const int type_oil = 106; 
 const int type_salt = 107;
 
-const TCHAR name_start[] = L"Старт";
-const TCHAR name_bank[] = L"Банк";
-const TCHAR name_rest[] = L"Отдых";
-const TCHAR name_prison[] = L"Тюрьма";
-const TCHAR name_gold[] = L"Драгоценные металлы";
-const TCHAR name_iron[] = L"Черные металлы";
-const TCHAR name_copper[] = L"Цветные металлы";
-const TCHAR name_incident[] = L"Шанс";
-const TCHAR name_gas[] = L"Газ";
-const TCHAR name_coal[] = L"Уголь";
-const TCHAR name_oil[] = L"Нефть";
-const TCHAR name_salt[] = L"Соль";
+const WCHAR name_start[] = L"Старт";
+const WCHAR name_bank[] = L"Банк";
+const WCHAR name_rest[] = L"Отдых";
+const WCHAR name_prison[] = L"Тюрьма";
+const WCHAR name_gold[] = L"Драгоценные металлы";
+const WCHAR name_iron[] = L"Черные металлы";
+const WCHAR name_copper[] = L"Цветные металлы";
+const WCHAR name_incident[] = L"Шанс";
+const WCHAR name_gas[] = L"Газ";
+const WCHAR name_coal[] = L"Уголь";
+const WCHAR name_oil[] = L"Нефть";
+const WCHAR name_salt[] = L"Соль";
 
 
 const int educ_cr_id = 1;
@@ -63,3 +64,9 @@ const int rule_sb_id = 2;
 
 
 const int chance_ext_id = 1;
+const int chance_new_tecnology_id = 2;
+const int chance_add_money_id = 3;
+const int chance_fine_id = 4;
+const int chance_rand_move_id = 5;
+const int chance_defl_id = 6;
+const int chance_sanctions_id = 7;

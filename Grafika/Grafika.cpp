@@ -26,6 +26,7 @@ int cube;                                       //результат броск�
 int current_position;
 int current_player = -1;
 HGDIOBJ colorPlayer[max_players];
+HGDIOBJ penPlayer[max_players];
 
 double infl;
 
@@ -86,20 +87,36 @@ int Transform(int n, POINT* p)
 
 void RandExcise() 
 {
-	int rand_cells = rand() % count_of;
+	//int rand_cells = rand() % count_of;
 
 }
 
 void Chance() 
 {
-	rand_chance = rand() % 10;
-
-	switch (rand_chance)
+	if (field[players[current_player].get_position()].get_type_cell() == type_incident)
 	{
-	case chance_ext_id:
-		
-	default:
-		break;
+		rand_chance = rand() % 7;
+
+		switch (rand_chance)
+		{
+		case chance_ext_id:
+			RandExcise();
+			break;
+		case chance_new_tecnology_id:
+			break;
+		case chance_add_money_id:
+			break;
+		case chance_fine_id:
+			break;
+		case chance_rand_move_id:
+			break;
+		case chance_sanctions_id:
+			break;
+		case chance_defl_id:
+			break;
+		default:
+			break;
+		}
 	}
 }
 
@@ -195,6 +212,15 @@ void Paint(HDC hdc, WPARAM wParam, LPARAM lParam)
 
 		PaintPlayer(hdc, &(players[i].color), &tobj, point, scale / count_of_players, i);
 	}
+	
+	point.x = indent - frameWidth / 2;
+	point.y = indent - frameWidth / 2;
+	if (current_player < 0)
+	{
+		PaintFrame(hdc, &colorHollow, &(players[0].pen), point, scale * (size_of_field / 4 + 1) + frameWidth + 1);
+	}
+	else
+		PaintFrame(hdc, &colorHollow, &(players[current_player].pen), point, scale * (size_of_field / 4 + 1) + frameWidth + 1);
 }
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -259,7 +285,7 @@ void InitField()
 	type_field[11].set_values(type_gas, count_of_res, &name_gas[0]);
 }
 
-int GetTypeField(TCHAR str[100])
+int GetTypeField(WCHAR str[100])
 {
 	for (int i = 0; i < count_of_types_cells; i++)
 	{
@@ -286,28 +312,35 @@ void Init() // определение начальных условий поля
 	field[0].set_number(0);
 	temp[0].count = 0;
 
-	std::wfstream fin;
+	std::fstream fin;
 	int file_num;
-	WCHAR file_str[100];
-	std::wstring file_name;
-	std::wstring file_dscp;
+	char file_temp[size_of_wchar];
+	WCHAR file_str[size_of_wchar];
+	WCHAR file_name[size_of_wchar];
+	WCHAR file_dscp[size_of_wchar];
 
 	int count;
-	fin.open("fuel2.dat", std::ios::out);
+	/*fin.open("fuel2.dat", std::ios::out);
 	fin << 5 << "sdpofspodf" << L"sdpofspodf" << "ылвиашщывра" ;
-	fin.close();
+	fin.close();*/
 	fin.open("fuel.dat", std::ios::in);
 
 	if (fin.is_open())
 	{				
 		//fin >> count;
 		fin >> file_num;
-		swprintf(&info_buffer[0], size_of_buffer, L"%d ", file_num);
-		fin.getline(&file_str[0], 100);
-		std::getline(fin, file_name);
-		std::getline(fin, file_dscp);
-
-		//swprintf(&info_buffer[0], size_of_buffer, L"%d \n%s \n%s \n%s", file_num, file_str, file_name, file_dscp);
+		//swprintf(&info_buffer[0], size_of_buffer, L"%d ", file_num);
+		fin.getline(&file_temp[0], size_of_wchar);
+		MultiByteToWideChar(1251, MB_PRECOMPOSED, file_temp, -1, file_str, size_of_wchar);
+		fin.getline(&file_temp[0], size_of_wchar);
+		MultiByteToWideChar(1251, MB_PRECOMPOSED, file_temp, -1, file_name, size_of_wchar);
+		fin.getline(&file_temp[0], size_of_wchar);
+		MultiByteToWideChar(1251, MB_PRECOMPOSED, file_temp, -1, file_dscp, size_of_wchar);
+		std::wfstream fout;
+		fout.open("abc.txt", std::ios::out);
+		fout << file_num << file_str << file_name << file_dscp;
+		fout.close();
+		swprintf(&info_buffer[0], size_of_buffer, L"%d \n%s \n%s \n%s", file_num, file_str, file_name, file_dscp);
 	}
 		
 
@@ -326,10 +359,10 @@ void Init() // определение начальных условий поля
 
 				if (fin.is_open())
 				{
-					fin >> file_num;
+					/*fin >> file_num;
 					fin.getline(&file_str[0], 100);
 					std::getline(fin, file_name);
-					std::getline(fin, file_dscp);
+					std::getline(fin, file_dscp);*/
 
 					//swprintf(&info_buffer[0], size_of_buffer, L"%d \n%s \n%s \n%s", file_num, file_str, file_name, file_dscp);
 				}
@@ -358,10 +391,17 @@ void Init() // определение начальных условий поля
 	colorPlayer[3] = colorPlayer3;
 	colorPlayer[4] = colorPlayer4;
 
+	penPlayer[0] = penPlayer0;
+	penPlayer[1] = penPlayer1;
+	penPlayer[2] = penPlayer2;
+	penPlayer[3] = penPlayer3;
+	penPlayer[4] = penPlayer4;
+
 
 	for (int i = 0; i < count_of_players; i++)
 	{
 		players[i].color = colorPlayer[i];
+		players[i].pen = penPlayer[i];
 	}
 
 	if (fin.is_open())
@@ -628,8 +668,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	info_button[1] = CreateWindowW(L"button", L"Кредит", WS_VISIBLE | WS_CHILD, indent + scale * 4, indent + scale * 7.5, 100, 30, hWnd, (HMENU)(1001 + 2), hInstance, NULL);
 	info_button[2] = CreateWindowW(L"button", L"Купить", WS_VISIBLE | WS_CHILD, indent * 3 + scale * 5, indent + scale * 7.5, 100, 30, hWnd, (HMENU)(1001 + 3), hInstance, NULL);
 	info_button[3] = CreateWindowW(L"button", L"Продать (?)", WS_VISIBLE | WS_CHILD, indent + scale * 4, indent + scale * 6.5, 100, 30, hWnd, (HMENU)(1001 + 4), hInstance, NULL);
-	//info_button[4] = CreateWindowW(L"button", L"Инфо", WS_VISIBLE | WS_CHILD, indent + scale * 3, indent + scale * 7, 100, 30, hWnd, (HMENU)(1001 + 5), hInstance, NULL);
-	//info_button[5] = CreateWindowW(L"button", L"Игрок", WS_VISIBLE | WS_CHILD, indent + scale * 5, indent + scale * 7, 100, 30, hWnd, (HMENU)(1001 + 6), hInstance, NULL);
+	info_button[4] = CreateWindowW(L"button", L"Шанс", WS_VISIBLE | WS_CHILD, indent + scale * 4, indent + scale * 7, 100, 30, hWnd, (HMENU)(1001 + 5), hInstance, NULL);
 		
 	HWND credit_button[5];
 	credit_button[0] = CreateWindowW(L"button", L"1", WS_VISIBLE | WS_CHILD, indent + scale * 2, indent + scale * 1.5, scale, scale / 3, hWnd, (HMENU)(3001 + 1), hInstance, NULL);
@@ -691,11 +730,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		case 1001 + 5:
-			//PrintCellInfo(&field[0]);
-			SetWindowTextW(info_dialog, &info_buffer[0]);
-			break;
-		case 1001 + 6:
-			//PrintPlayerInfo(&players[0]);
+			Chance();
 			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		case 3001 + 1:

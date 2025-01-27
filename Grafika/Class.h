@@ -150,7 +150,7 @@ class type_cell
 public:
     int number; //значение константы
     int count; //кол-во клеток
-    TCHAR name[100]; //название типа клетки
+    WCHAR name[size_of_wchar]; //название типа клетки
 
     type_cell() {
         number = 0;
@@ -158,7 +158,7 @@ public:
         lstrcpyW(&name[0], L"Отдых");
     }
 
-    void set_values(int num, int con, const TCHAR *nam)
+    void set_values(int num, int con, const WCHAR *nam)
     {
         number = num;
         count = con;
@@ -181,7 +181,7 @@ private:
     
 
 public:
-    TCHAR buffer[size_of_buffer];
+    WCHAR buffer[size_of_buffer];
 
     credit()
     {
@@ -348,6 +348,7 @@ private:
 
 public:
     HGDIOBJ color;
+    HGDIOBJ pen;
     credit debt;
 
     player()
@@ -357,6 +358,7 @@ public:
         own_size = 0;
         position = 0;
         color = CreateSolidBrush(RGB(255, 255, 255));
+        pen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
     }
 
     void set_name(std::wstring nm)
