@@ -85,52 +85,40 @@ int Transform(int n, POINT* p)
 	}
 }
 
-void ChanceRandExcise() 
+void RandExcise() 
 {
-	//int rand_cells = rand() % count_of_res;
+	//int rand_cells = rand() % count_of;
 
 }
 
-void ChanceRandNewTecnology() 
+void Chance() 
 {
-	swprintf(&info_buffer[0], size_of_buffer, L"Шанс\n");
+	if (field[players[current_player].get_position()].get_type_cell() == type_incident)
+	{
+		rand_chance = rand() % 7;
+
+		switch (rand_chance)
+		{
+		case chance_ext_id:
+			RandExcise();
+			break;
+		case chance_new_tecnology_id:
+			break;
+		case chance_add_money_id:
+			break;
+		case chance_fine_id:
+			break;
+		case chance_rand_move_id:
+			break;
+		case chance_sanctions_id:
+			break;
+		case chance_defl_id:
+			break;
+		default:
+			break;
+		}
+	}
 }
-
-void ChanceRandAddMoney()
-{
-	double rand_add_money = rand() % 1000;
-	players[current_player].add_money(rand_add_money);
-
-	swprintf(&info_buffer[0], size_of_buffer, L"Подработка.\nИгрок %s зарабатывает %8.2f монет!\n", (players[current_player].get_name()).c_str(), rand_add_money);
-}
-
-void ChanceRandFine()
-{
-	double rand_fine = rand() % 500;
-	players[current_player].subtract_money(rand_fine);
-
-	swprintf(&info_buffer[0], size_of_buffer, L"Штраф.\nИгрок %s уплачивает штраф в размере %8.2f монет!\n", (players[current_player].get_name()).c_str(), rand_fine);
-}
-
-void ChanceRandMove() 
-{
-	int rand_move = rand() % size_of_field;
-	players[current_player].set_position(current_position + rand_move);
-
-	swprintf(&info_buffer[0], size_of_buffer, L"Перелет.\nИгрок %s перемещается на %d клеток вперед!\n", (players[current_player].get_name()).c_str(), rand_move);
-}
-
-void ChanceRandSanctions() 
-{
-	swprintf(&info_buffer[0], size_of_buffer, L"Шанс\n");
-}
-
-void ChanceRandDefl() 
-{
-	swprintf(&info_buffer[0], size_of_buffer, L"Шанс\n");
-}
-
-
 
 void Paint(HDC hdc, WPARAM wParam, LPARAM lParam)
 {
@@ -460,8 +448,6 @@ void Step()
 
 	current_position = (players[current_player].get_position() + cube);
 
-	
-
 	if (current_position >= size_of_field)
 	{
 		players[current_player].debt.add_current_circle();
@@ -504,45 +490,6 @@ void Step()
 
 	swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nНазвание: %s \nОписание: %s \nЦена: %8.2f \nНалог: %8.2f \nТип клетки: %d \nНомер клетки: %d \nВладелец: %d \n",
 		(field[current_position].get_name()).c_str(), (field[current_position].get_discription()).c_str(), field[current_position].get_price(), field[current_position].get_tax(), field[current_position].get_type_cell(), field[current_position].get_number(), field[current_position].get_owner());
-	
-	if (field[current_position].get_type_cell() == type_incident)
-	{
-		rand_chance = rand() % 7;
-
-		switch (rand_chance)
-		{
-		case chance_ext_id:
-			ChanceRandExcise();
-			SetWindowTextW(info_dialog, &info_buffer[0]);
-			break;
-		case chance_new_tecnology_id:
-			ChanceRandNewTecnology();
-			SetWindowTextW(info_dialog, &info_buffer[0]);
-			break;
-		case chance_add_money_id:
-			ChanceRandAddMoney();
-			SetWindowTextW(info_dialog, &info_buffer[0]);
-			break;
-		case chance_fine_id:
-			ChanceRandFine();
-			SetWindowTextW(info_dialog, &info_buffer[0]);
-			break;
-		case chance_rand_move_id:
-			ChanceRandMove();
-			SetWindowTextW(info_dialog, &info_buffer[0]);
-			break;
-		case chance_sanctions_id:
-			ChanceRandSanctions();
-			SetWindowTextW(info_dialog, &info_buffer[0]);
-			break;
-		case chance_defl_id:
-			ChanceRandDefl();
-			SetWindowTextW(info_dialog, &info_buffer[0]);
-			break;
-		default:
-			break;
-		}
-	}
 }
 
 void Buy()
@@ -721,6 +668,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	info_button[1] = CreateWindowW(L"button", L"Кредит", WS_VISIBLE | WS_CHILD, indent + scale * 4, indent + scale * 7.5, 100, 30, hWnd, (HMENU)(1001 + 2), hInstance, NULL);
 	info_button[2] = CreateWindowW(L"button", L"Купить", WS_VISIBLE | WS_CHILD, indent * 3 + scale * 5, indent + scale * 7.5, 100, 30, hWnd, (HMENU)(1001 + 3), hInstance, NULL);
 	info_button[3] = CreateWindowW(L"button", L"Продать (?)", WS_VISIBLE | WS_CHILD, indent + scale * 4, indent + scale * 6.5, 100, 30, hWnd, (HMENU)(1001 + 4), hInstance, NULL);
+	info_button[4] = CreateWindowW(L"button", L"Шанс", WS_VISIBLE | WS_CHILD, indent + scale * 4, indent + scale * 7, 100, 30, hWnd, (HMENU)(1001 + 5), hInstance, NULL);
 		
 	HWND credit_button[5];
 	credit_button[0] = CreateWindowW(L"button", L"1", WS_VISIBLE | WS_CHILD, indent + scale * 2, indent + scale * 1.5, scale, scale / 3, hWnd, (HMENU)(3001 + 1), hInstance, NULL);
@@ -779,6 +727,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case 1001 + 3:
 			Buy();
+			SetWindowTextW(info_dialog, &info_buffer[0]);
+			break;
+		case 1001 + 5:
+			Chance();
 			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		case 3001 + 1:
