@@ -28,18 +28,19 @@ const int type_not_bought = 0; //не купленная клетка
 const int type_cannot_bought = -1; //не продается
 
 const int count_of_types_cells = 12;
+const int count_of_types_res = 7;
 const int type_start = 0;  
 const int type_bank = 1;
 const int type_rest = 2;
 const int type_prison = 3;
+const int type_incident = 4;
 const int type_gold = 100;   
 const int type_iron = 101;    
 const int type_copper = 102;   
-const int type_incident = 103;   
-const int type_gas = 104;   
-const int type_coal = 105;    
-const int type_oil = 106; 
-const int type_salt = 107;
+const int type_gas = 103;   
+const int type_coal = 104;    
+const int type_oil = 105; 
+const int type_salt = 106;
 
 const WCHAR name_start[] = L"Старт";
 const WCHAR name_bank[] = L"Банк";
@@ -63,10 +64,10 @@ const int rule_step_id = 1;
 const int rule_sb_id = 2;
 
 
-const int chance_ext_id = 1;
-const int chance_new_tecnology_id = 2;
-const int chance_add_money_id = 3;
-const int chance_fine_id = 4;
-const int chance_rand_move_id = 5;
-const int chance_defl_id = 6;
-const int chance_sanctions_id = 7;
+const int chance_ext_id = 0;
+const int chance_new_tecnology_id = 1;
+const int chance_add_money_id = 2;
+const int chance_fine_id = 3;
+const int chance_rand_move_id = 4;
+const int chance_defl_id = 5;
+const int chance_sanctions_id = 6;

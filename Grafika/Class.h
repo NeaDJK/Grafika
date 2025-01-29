@@ -350,6 +350,7 @@ public:
     HGDIOBJ color;
     HGDIOBJ pen;
     credit debt;
+    int add_position;
 
     player()
     {
@@ -359,6 +360,7 @@ public:
         position = 0;
         color = CreateSolidBrush(RGB(255, 255, 255));
         pen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
+        add_position = 0;
     }
 
     void set_name(std::wstring nm)

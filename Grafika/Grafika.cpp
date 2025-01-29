@@ -23,6 +23,7 @@ type_cell type_field[count_of_types_cells];     //типы клеток поля
 player players[max_players];                    //игроки
 credit cr[count_of_credit_plans];
 int cube;                                       //результат броска кубика
+int max_cube = 12;
 int current_position;
 int current_player = -1;
 HGDIOBJ colorPlayer[max_players];
@@ -85,34 +86,129 @@ int Transform(int n, POINT* p)
 	}
 }
 
-void RandExcise() 
+void ChanceRandExcise() //Повышение цен некоторых клеток
 {
-	//int rand_cells = rand() % count_of;
+	int rand_percent = rand() % 10;
+	double rand_multiple = 1 + rand_percent / 100.;
+	int rand_type = 100 + rand() % count_of_types_res;
 
+	for (int i = 0; i < size_of_field; i++)
+	{
+		if (field[i].get_type_cell() == rand_type)
+		{
+			field[i].set_price(field[i].get_price() * rand_multiple);
+			field[i].set_tax(field[i].get_tax() * rand_multiple);
+		}
+	}
+
+	swprintf(&info_buffer[0], size_of_buffer, L"Введиние акцизов!\nНекоторые цены повышаются на %d%%\n", rand_percent);
+}
+
+void ChanceRandNewTecnology() //Понижение цен некоторых клеток
+{
+	int rand_percent = rand() % 10;
+	double rand_multiple = 1 - rand_percent / 100.;
+	int rand_type = 100 + rand() % count_of_types_res;
+
+	for (int i = 0; i < size_of_field; i++)
+	{
+		if (field[i].get_type_cell() == rand_type)
+		{
+			field[i].set_price(field[i].get_price() * rand_multiple);
+			field[i].set_tax(field[i].get_tax() * rand_multiple);
+		}
+	}
+
+	swprintf(&info_buffer[0], size_of_buffer, L"Новые технологии!\nНекоторые цены понижаются на %d%%\n", rand_percent);
+}
+
+void ChanceRandAddMoney() //Подработка
+{
+	double rand_add_money = rand() % 1000;
+	players[current_player].add_money(rand_add_money);
+
+	swprintf(&info_buffer[0], size_of_buffer, L"Подработка.\nИгрок %s зарабатывает %8.2f монет!\n", (players[current_player].get_name()).c_str(), rand_add_money);
+}
+
+void ChanceRandFine() //Штраф
+{
+	double rand_fine = rand() % 500;
+	players[current_player].subtract_money(rand_fine);
+
+	swprintf(&info_buffer[0], size_of_buffer, L"Штраф.\nИгрок %s уплачивает штраф в размере %8.2f монет!\n", (players[current_player].get_name()).c_str(), rand_fine);
+}
+
+void ChanceRandMove() //Перелет
+{
+	int rand_move = rand() % size_of_field - max_cube;
+	players[current_player].add_position = rand_move;
+
+	swprintf(&info_buffer[0], size_of_buffer, L"Перелет.\nИгрок %s в следующем ходу переместится на допольнительные клетки вперед: %d.\n", (players[current_player].get_name()).c_str(), rand_move);
+}
+
+void ChanceRandSanctions() //Повышение цен всех клеток
+{
+	int rand_percent = rand() % 10;
+	double rand_multiple = 1 + rand_percent / 100.;
+
+	for (int i = 0; i < size_of_field; i++)
+	{
+		field[i].set_price(field[i].get_price() * rand_multiple);
+		field[i].set_tax(field[i].get_tax() * rand_multiple);
+	}
+
+	swprintf(&info_buffer[0], size_of_buffer, L"Повышение уровня инфляции!\nВсе цены поднимаются на %d%%\n", rand_percent);
+}
+
+void ChanceRandDefl() //Понижение цен всех клеток
+{
+	int rand_percent = rand() % 10;
+	double rand_multiple = 1 - rand_percent / 100.;
+
+	for (int i = 0; i < size_of_field; i++)
+	{
+		field[i].set_price(field[i].get_price() * rand_multiple);
+		field[i].set_tax(field[i].get_tax() * rand_multiple);
+	}
+
+	swprintf(&info_buffer[0], size_of_buffer, L"Дефляция!\nВсе цены понижаются на %d%%\n", rand_percent);
 }
 
 void Chance() 
 {
-	if (field[players[current_player].get_position()].get_type_cell() == type_incident)
+	if (field[current_position].get_type_cell() == type_incident)
 	{
 		rand_chance = rand() % 7;
 
 		switch (rand_chance)
 		{
 		case chance_ext_id:
-			RandExcise();
+			ChanceRandExcise();
+			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		case chance_new_tecnology_id:
+			ChanceRandNewTecnology();
+			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		case chance_add_money_id:
+			ChanceRandAddMoney();
+			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		case chance_fine_id:
+			ChanceRandFine();
+			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		case chance_rand_move_id:
+			ChanceRandMove();
+			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		case chance_sanctions_id:
+			ChanceRandSanctions();
+			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		case chance_defl_id:
+			ChanceRandDefl();
+			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
 		default:
 			break;
@@ -265,7 +361,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 void InitField()
 {
-	count_of_res = int(size_of_field * 0.7) / 7;
+	count_of_res = int(size_of_field * 0.7) / count_of_types_res;
 	count_of_start = 1;
 	count_of_prisons = int(size_of_field * 0.09);
 	count_of_banks = int(size_of_field * 0.09);
@@ -313,11 +409,11 @@ void Init() // определение начальных условий поля
 	temp[0].count = 0;
 
 	std::fstream fin;
-	int file_num;
-	char file_temp[size_of_wchar];
-	WCHAR file_str[size_of_wchar];
-	WCHAR file_name[size_of_wchar];
-	WCHAR file_dscp[size_of_wchar];
+	int file_num; //кол-во файлов
+	char file_temp[size_of_wchar]; //переменная для считывания
+	WCHAR file_str[size_of_wchar]; //тип
+	WCHAR file_name[size_of_wchar]; //название
+	WCHAR file_dscp[size_of_wchar]; //описание
 
 	int count;
 	/*fin.open("fuel2.dat", std::ios::out);
@@ -443,10 +539,11 @@ void Init() // определение начальных условий поля
 void Step()
 {
 	current_player = (current_player + 1) % (count_of_players);
-	cube = rand() % 12 + 1;
+	cube = rand() % max_cube + 1;
 	//std::cout << cube << std::endl;
 
-	current_position = (players[current_player].get_position() + cube);
+	current_position = (players[current_player].get_position() + cube + players[current_player].add_position);
+	players[current_player].add_position = 0;
 
 	if (current_position >= size_of_field)
 	{
@@ -490,6 +587,8 @@ void Step()
 
 	swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nНазвание: %s \nОписание: %s \nЦена: %8.2f \nНалог: %8.2f \nТип клетки: %d \nНомер клетки: %d \nВладелец: %d \n",
 		(field[current_position].get_name()).c_str(), (field[current_position].get_discription()).c_str(), field[current_position].get_price(), field[current_position].get_tax(), field[current_position].get_type_cell(), field[current_position].get_number(), field[current_position].get_owner());
+
+	Chance();
 }
 
 void Buy()
@@ -668,7 +767,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	info_button[1] = CreateWindowW(L"button", L"Кредит", WS_VISIBLE | WS_CHILD, indent + scale * 4, indent + scale * 7.5, 100, 30, hWnd, (HMENU)(1001 + 2), hInstance, NULL);
 	info_button[2] = CreateWindowW(L"button", L"Купить", WS_VISIBLE | WS_CHILD, indent * 3 + scale * 5, indent + scale * 7.5, 100, 30, hWnd, (HMENU)(1001 + 3), hInstance, NULL);
 	info_button[3] = CreateWindowW(L"button", L"Продать (?)", WS_VISIBLE | WS_CHILD, indent + scale * 4, indent + scale * 6.5, 100, 30, hWnd, (HMENU)(1001 + 4), hInstance, NULL);
-	info_button[4] = CreateWindowW(L"button", L"Шанс", WS_VISIBLE | WS_CHILD, indent + scale * 4, indent + scale * 7, 100, 30, hWnd, (HMENU)(1001 + 5), hInstance, NULL);
+	//info_button[4] = CreateWindowW(L"button", L"Шанс", WS_VISIBLE | WS_CHILD, indent + scale * 4, indent + scale * 7, 100, 30, hWnd, (HMENU)(1001 + 5), hInstance, NULL);
 		
 	HWND credit_button[5];
 	credit_button[0] = CreateWindowW(L"button", L"1", WS_VISIBLE | WS_CHILD, indent + scale * 2, indent + scale * 1.5, scale, scale / 3, hWnd, (HMENU)(3001 + 1), hInstance, NULL);
@@ -729,10 +828,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			Buy();
 			SetWindowTextW(info_dialog, &info_buffer[0]);
 			break;
-		case 1001 + 5:
+		/*case 1001 + 5:
 			Chance();
 			SetWindowTextW(info_dialog, &info_buffer[0]);
-			break;
+			break;*/
 		case 3001 + 1:
 			GetCredit(1);
 			SetWindowTextW(info_dialog, &info_buffer[0]);
