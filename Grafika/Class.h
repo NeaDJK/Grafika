@@ -351,6 +351,8 @@ public:
     HGDIOBJ pen;
     credit debt;
     int add_position;
+    bool is_arrested;
+    int time_arrest;
 
     player()
     {
@@ -361,6 +363,8 @@ public:
         color = CreateSolidBrush(RGB(255, 255, 255));
         pen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
         add_position = 0;
+        is_arrested = false;
+        time_arrest = 0;
     }
 
     void set_name(std::wstring nm)

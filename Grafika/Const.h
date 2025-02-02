@@ -6,6 +6,7 @@ const int size_of_input = 10; //размер вводимых команд
 const int max_players = 5; //максимальное кол-во игроков
 const int count_of_credit_plans = 5; //кол-во вариантов схем кредитов
 const int money_for_circle = 200; //деньги за круг
+const int def_arrest_time = 3;
 
 const int size_of_price = 100;
 const int size_of_buffer = 10000;

@@ -216,6 +216,29 @@ void Chance()
 	}
 }
 
+void Arrest()
+{
+	if (field[current_position].get_type_cell() == type_prison)
+	{
+		players[current_player].is_arrested = true;
+		current_player = (current_player + 1) % (count_of_players);
+		players[current_player].time_arrest = def_arrest_time;
+
+		swprintf(&info_buffer[0], size_of_buffer, L"Арест.\nИгрок %s пропускает ход: %d", (players[current_player].get_name()).c_str(), players[current_player].time_arrest);
+		SetWindowTextW(info_dialog, &info_buffer[0]);
+
+		if (players[current_player].time_arrest > 0)
+		{
+			players[current_player].time_arrest - 1;
+		}
+		
+		if (players[current_player].time_arrest == 0)
+		{
+			players[current_player].is_arrested = false;
+		}
+	}
+}
+
 void Paint(HDC hdc, WPARAM wParam, LPARAM lParam)
 {
 	POINT point;
@@ -538,57 +561,61 @@ void Init() // определение начальных условий поля
 
 void Step()
 {
-	current_player = (current_player + 1) % (count_of_players);
-	cube = rand() % max_cube + 1;
-	//std::cout << cube << std::endl;
-
-	current_position = (players[current_player].get_position() + cube + players[current_player].add_position);
-	players[current_player].add_position = 0;
-
-	if (current_position >= size_of_field)
+	//if(players[current_player].is_arrested == false)
 	{
-		players[current_player].debt.add_current_circle();
-		players[current_player].debt.end_credit();
-		players[current_player].add_money(money_for_circle);
-		players[current_player].subtract_money(players[current_player].debt.current_payment_for_circle());
-	}
+		current_player = (current_player + 1) % (count_of_players);
+		cube = rand() % max_cube + 1;
+		//std::cout << cube << std::endl;
 
-	current_position = current_position % (size_of_field);
-	players[current_player].set_position(current_position);
+		current_position = (players[current_player].get_position() + cube + players[current_player].add_position);
+		players[current_player].add_position = 0;
 
-	switch (field[current_position].is_bought())
-	{
-	case type_bought:
-		if (field[current_position].get_owner() != current_player)
+		if (current_position >= size_of_field)
 		{
-			players[current_player].subtract_money(field[current_position].get_tax());
-			players[field[current_position].get_owner()].add_money(field[current_position].get_tax());
-			//std::cout << "Перевод: " << field[current_position].get_tax() << " рублей игроку " << field[current_position].get_owner() << std::endl;
-			swprintf(&info_buffer[0], size_of_buffer, L"Перевод: %8.2f  рублей игроку %d", field[current_position].get_tax(), field[current_position].get_owner());
+			players[current_player].debt.add_current_circle();
+			players[current_player].debt.end_credit();
+			players[current_player].add_money(money_for_circle);
+			players[current_player].subtract_money(players[current_player].debt.current_payment_for_circle());
 		}
-		break;
-	default:
-		break;
+
+		current_position = current_position % (size_of_field);
+		players[current_player].set_position(current_position);
+
+		switch (field[current_position].is_bought())
+		{
+		case type_bought:
+			if (field[current_position].get_owner() != current_player)
+			{
+				players[current_player].subtract_money(field[current_position].get_tax());
+				players[field[current_position].get_owner()].add_money(field[current_position].get_tax());
+				//std::cout << "Перевод: " << field[current_position].get_tax() << " рублей игроку " << field[current_position].get_owner() << std::endl;
+				swprintf(&info_buffer[0], size_of_buffer, L"Перевод: %8.2f  рублей игроку %d", field[current_position].get_tax(), field[current_position].get_owner());
+			}
+			break;
+		default:
+			break;
+		}
+
+		swprintf(&info_buffer[0], size_of_buffer, L"Игрок %s перемещается на %d клеток \nБаланс: % 8.2f \nПозиция : % d \n", (players[current_player].get_name()).c_str(), cube, players[current_player].get_money(), players[current_player].get_position());
+
+		if (players[current_player].debt.get_sum() == 0)
+		{
+			swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"Кредитов нет. \n");
+		}
+
+		else
+		{
+			swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nИнформация по кредиту: \n");
+			players[current_player].debt.info_credit();
+			swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, players[current_player].debt.buffer);
+		}
+
+		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nНазвание: %s \nОписание: %s \nЦена: %8.2f \nНалог: %8.2f \nТип клетки: %d \nНомер клетки: %d \nВладелец: %d \n",
+			(field[current_position].get_name()).c_str(), (field[current_position].get_discription()).c_str(), field[current_position].get_price(), field[current_position].get_tax(), field[current_position].get_type_cell(), field[current_position].get_number(), field[current_position].get_owner());
 	}
-
-	swprintf(&info_buffer[0], size_of_buffer, L"Игрок %s перемещается на %d клеток \nБаланс: % 8.2f \nПозиция : % d \n", (players[current_player].get_name()).c_str(), cube, players[current_player].get_money(), players[current_player].get_position());
-
-	if (players[current_player].debt.get_sum() == 0)
-	{
-		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"Кредитов нет. \n");
-	}
-
-	else
-	{
-		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nИнформация по кредиту: \n");
-		players[current_player].debt.info_credit();
-		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, players[current_player].debt.buffer);
-	}
-
-	swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nНазвание: %s \nОписание: %s \nЦена: %8.2f \nНалог: %8.2f \nТип клетки: %d \nНомер клетки: %d \nВладелец: %d \n",
-		(field[current_position].get_name()).c_str(), (field[current_position].get_discription()).c_str(), field[current_position].get_price(), field[current_position].get_tax(), field[current_position].get_type_cell(), field[current_position].get_number(), field[current_position].get_owner());
 
 	Chance();
+	Arrest();
 }
 
 void Buy()
