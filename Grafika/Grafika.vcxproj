@@ -142,6 +142,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Grafika.ico" />
+    <Image Include="oil.bmp" />
     <Image Include="small.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

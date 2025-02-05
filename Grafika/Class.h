@@ -6,6 +6,7 @@ private:
     int number; //пор€дковый номер пол€
     std::wstring name; //название
     std::wstring discription; //описание клетки
+    std::wstring type; //тип клетки
     double price; //цена
     double def_price;
     double tax; //налог
@@ -22,8 +23,9 @@ public:
     cell()
     {
         number = 1;
-        name = L" итай-√ород";
-        discription = L"станци€ метро";
+        name = L"";
+        discription = L"";
+        type = L"";
         price = 100;
         def_price = price;
         tax = 10;
@@ -53,9 +55,14 @@ public:
         number = num;
     }
 
-    void set_bame(std::wstring nm)
+    void set_name(std::wstring nm)
     {
         name = nm;
+    }
+
+    void set_type(std::wstring tp) 
+    {
+        type = tp;
     }
 
     void set_price(double prc)
@@ -63,9 +70,19 @@ public:
         price = prc;
     }
 
+    void set_def_price(double dfp) 
+    {
+        def_price = dfp;
+    }
+
     void set_tax(double tx)
     {
         tax = tx;
+    }
+
+    void set_def_tax(double tx)
+    {
+        def_tax = tx;
     }
 
     void set_type_cell(char tpc)
@@ -105,14 +122,30 @@ public:
         return discription;
     }
 
+    std::wstring get_type()
+    {
+        return type;
+    }
+
     double get_price()
     {
         return price;
     }
 
+    double get_def_price()
+    {
+        return def_price;
+    }
+
+
     double get_tax()
     {
         return tax;
+    }
+
+    double get_def_tax()
+    {
+        return def_tax;
     }
 
     char get_type_cell()
@@ -351,6 +384,8 @@ public:
     HGDIOBJ pen;
     credit debt;
     int add_position;
+    bool is_arrested;
+    int time_arrest;
 
     player()
     {
@@ -361,6 +396,8 @@ public:
         color = CreateSolidBrush(RGB(255, 255, 255));
         pen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
         add_position = 0;
+        is_arrested = false;
+        time_arrest = 0;
     }
 
     void set_name(std::wstring nm)

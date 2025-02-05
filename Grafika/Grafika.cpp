@@ -176,42 +176,28 @@ void ChanceRandDefl() //Понижение цен всех клеток
 
 void Chance() 
 {
-	if (field[current_position].get_type_cell() == type_incident)
-	{
-		rand_chance = rand() % 7;
+	
+}
 
-		switch (rand_chance)
+void Arrest()
+{
+	if (field[current_position].get_type_cell() == type_prison)
+	{
+		players[current_player].is_arrested = true;
+		//current_player = (current_player + 1) % (count_of_players);
+		players[current_player].time_arrest = def_arrest_time;
+
+		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"Арест.\nИгрок %s находится в тюрьме %d ходов", (players[current_player].get_name()).c_str(), players[current_player].time_arrest);
+		SetWindowTextW(info_dialog, &info_buffer[0]);
+
+		if (players[current_player].time_arrest > 0)
 		{
-		case chance_ext_id:
-			ChanceRandExcise();
-			SetWindowTextW(info_dialog, &info_buffer[0]);
-			break;
-		case chance_new_tecnology_id:
-			ChanceRandNewTecnology();
-			SetWindowTextW(info_dialog, &info_buffer[0]);
-			break;
-		case chance_add_money_id:
-			ChanceRandAddMoney();
-			SetWindowTextW(info_dialog, &info_buffer[0]);
-			break;
-		case chance_fine_id:
-			ChanceRandFine();
-			SetWindowTextW(info_dialog, &info_buffer[0]);
-			break;
-		case chance_rand_move_id:
-			ChanceRandMove();
-			SetWindowTextW(info_dialog, &info_buffer[0]);
-			break;
-		case chance_sanctions_id:
-			ChanceRandSanctions();
-			SetWindowTextW(info_dialog, &info_buffer[0]);
-			break;
-		case chance_defl_id:
-			ChanceRandDefl();
-			SetWindowTextW(info_dialog, &info_buffer[0]);
-			break;
-		default:
-			break;
+			players[current_player].time_arrest - 1;
+		}
+		
+		if (players[current_player].time_arrest == 0)
+		{
+			players[current_player].is_arrested = false;
 		}
 	}
 }
@@ -256,42 +242,51 @@ void Paint(HDC hdc, WPARAM wParam, LPARAM lParam)
 		switch (field[i].get_type_cell())
 		{
 		case type_start:
-			PaintStart(hdc, &colorStart, &tobj, point, scale);
+			SetTextColor(hdc, RGB(255, 255, 255));
+			PaintStart(hInst, hdc, &colorStart, &tobj, point, scale, L"IDB_START");
 			break;
 		case type_bank:
-			PaintBank(hdc, &colorBank, &tobj, point, scale);
+			SetTextColor(hdc, RGB(255, 255, 255));
+			PaintBank(hInst, hdc, &colorBank, &tobj, point, scale, L"IDB_BANK");
 			break;
 		case type_prison:
-			PaintPrison(hdc, &colorPrison, &tobj, point, scale);
+			SetTextColor(hdc, RGB(255, 255, 255));
+			PaintPrison(hInst, hdc, &colorPrison, &tobj, point, scale, L"IDB_PRISON");
 			break;
 		case type_incident:
-			PaintIncident(hdc, &colorIncident, &tobj, point, scale);
+			SetTextColor(hdc, RGB(255, 255, 255));
+			PaintIncident(hInst, hdc, &colorIncident, &tobj, point, scale, L"IDB_INCIDENT");
 			break;
 		case type_rest:
-			PaintRest(hdc, &colorRest, &tobj, point, scale);
+			SetTextColor(hdc, RGB(255, 255, 255));
+			PaintRest(hInst, hdc, &colorRest, &tobj, point, scale, L"IDB_REST");
 			break;
 		case type_gold:
-			PaintBuySell(hdc, &colorGold, &tobj, point, scale, L"Золото", name_gold, &price[0]);
+			SetTextColor(hdc, RGB(255, 255, 255));
+			PaintBuySell(hInst, hdc, &colorGold, &tobj, point, scale, &(field[i].get_name()[0]), name_gold, &price[0], L"IDB_GOLD");
 			break;
 		case type_iron:
-			PaintBuySell(hdc, &colorIron, &tobj, point, scale, L"Железо", name_iron, &price[0]);
+			SetTextColor(hdc, RGB(255, 255, 255));
+			PaintBuySell(hInst, hdc, &colorIron, &tobj, point, scale, &(field[i].get_name()[0]), name_iron, &price[0], L"IDB_IRON");
 			break;
 		case type_copper:
-			PaintBuySell(hdc, &colorCopper, &tobj, point, scale, L"Медь", name_copper, &price[0]);
+			SetTextColor(hdc, RGB(255, 255, 255));
+			PaintBuySell(hInst, hdc, &colorCopper, &tobj, point, scale, &(field[i].get_name()[0]), name_copper, &price[0], L"IDB_COPPER");
 			break;
 		case type_gas:
-			PaintBuySell(hdc, &colorGas, &tobj, point, scale, L"Газ", name_gas, &price[0]);
+			PaintBuySell(hInst, hdc, &colorGas, &tobj, point, scale, &(field[i].get_name()[0]), name_gas, &price[0], L"IDB_GAS");
 			break;
 		case type_coal:
 			SetTextColor(hdc, RGB(255, 255, 255));
-			PaintBuySell(hdc, &colorCoal, &tobj, point, scale, L"Уголь", name_coal, &price[0]);
+			PaintBuySell(hInst, hdc, &colorCoal, &tobj, point, scale, &(field[i].get_name()[0]), name_coal, &price[0], L"IDB_COAL");
 			break;
 		case type_oil:
 			SetTextColor(hdc, RGB(255, 255, 255));
-			PaintBuySell(hdc, &colorOil, &tobj, point, scale, L"Нефть", name_oil, &price[0]);
+			PaintBuySell(hInst, hdc, &colorOil, &tobj, point, scale, &(field[i].get_name()[0]), name_oil, &price[0], L"IDB_OIL");
 			break;
 		case type_salt:
-			PaintBuySell(hdc, &colorSalt, &tobj, point, scale, L"Соль", name_salt, &price[0]);
+			SetTextColor(hdc, RGB(255, 255, 255));
+			PaintBuySell(hInst, hdc, &colorSalt, &tobj, point, scale, &(field[i].get_name()[0]), name_salt, &price[0], L"IDB_SALT");
 			break;
 		default:
 			break;
@@ -409,11 +404,11 @@ void Init() // определение начальных условий поля
 	temp[0].count = 0;
 
 	std::fstream fin;
-	int file_num; //кол-во файлов
-	char file_temp[size_of_wchar]; //переменная для считывания
-	WCHAR file_str[size_of_wchar]; //тип
-	WCHAR file_name[size_of_wchar]; //название
-	WCHAR file_dscp[size_of_wchar]; //описание
+	int file_num;
+	WCHAR file_wtemp[size_of_wchar];
+	char file_temp[size_of_wchar];
+	std::wstring file_str, file_name, file_dscp;
+	
 
 	int count;
 	/*fin.open("fuel2.dat", std::ios::out);
@@ -426,17 +421,12 @@ void Init() // определение начальных условий поля
 		//fin >> count;
 		fin >> file_num;
 		//swprintf(&info_buffer[0], size_of_buffer, L"%d ", file_num);
-		fin.getline(&file_temp[0], size_of_wchar);
-		MultiByteToWideChar(1251, MB_PRECOMPOSED, file_temp, -1, file_str, size_of_wchar);
-		fin.getline(&file_temp[0], size_of_wchar);
-		MultiByteToWideChar(1251, MB_PRECOMPOSED, file_temp, -1, file_name, size_of_wchar);
-		fin.getline(&file_temp[0], size_of_wchar);
-		MultiByteToWideChar(1251, MB_PRECOMPOSED, file_temp, -1, file_dscp, size_of_wchar);
-		std::wfstream fout;
+		
+		/*std::wfstream fout;
 		fout.open("abc.txt", std::ios::out);
 		fout << file_num << file_str << file_name << file_dscp;
 		fout.close();
-		swprintf(&info_buffer[0], size_of_buffer, L"%d \n%s \n%s \n%s", file_num, file_str, file_name, file_dscp);
+		swprintf(&info_buffer[0], size_of_buffer, L"%d \n%s \n%s \n%s", file_num, file_str, file_name, file_dscp);*/
 	}
 		
 
@@ -453,14 +443,47 @@ void Init() // определение начальных условий поля
 				field[j].set_type_cell(temp[rc].number);
 				field[j].set_number(j);
 
+				double rand_price = rand() % (size_of_field * 200 / max_cube) + size_of_field * 200 / max_cube;
+				double rand_tax = (rand() % 11 + 20) *1. / 100 * rand_price;
+
+				field[j].set_def_price(rand_price);
+				field[j].set_def_tax(rand_tax);
+				field[j].set_price(rand_price);
+				field[j].set_tax(rand_tax);
+
 				if (fin.is_open())
 				{
-					/*fin >> file_num;
-					fin.getline(&file_str[0], 100);
-					std::getline(fin, file_name);
+					//fin >> file_num;
+					fin.getline(&file_temp[0], size_of_wchar);
+					//file_wtemp[0] = L'\0';
+					MultiByteToWideChar(1251, MB_PRECOMPOSED, file_temp, -1, file_wtemp, size_of_wchar);
+					
+					file_name = std::wstring(&file_wtemp[0]);
+					field[j].set_name(file_name);
+					/*std::getline(fin, file_name);
 					std::getline(fin, file_dscp);*/
 
-					//swprintf(&info_buffer[0], size_of_buffer, L"%d \n%s \n%s \n%s", file_num, file_str, file_name, file_dscp);
+					//swprintf(&info_buffer[0], size_of_buffer, L"%d \n%s", file_num, file_name.c_str());
+
+					/*fin.getline(&file_temp[0], size_of_wchar);
+					MultiByteToWideChar(1251, MB_PRECOMPOSED, file_temp, -1, &(file_str[0]), size_of_wchar);
+					fin.getline(&file_temp[0], size_of_wchar);
+					MultiByteToWideChar(1251, MB_PRECOMPOSED, file_temp, -1, file_name, size_of_wchar);
+					fin.getline(&file_temp[0], size_of_wchar);
+					MultiByteToWideChar(1251, MB_PRECOMPOSED, file_temp, -1, file_dscp, size_of_wchar);
+					fin.getline(&file_temp[0], size_of_wchar);
+
+					field[j].set_name(file_name);*/
+				}
+
+				if (field[j].get_name().length() < 1)
+				{
+					field[j].set_name(temp[rc].name);
+				}
+
+				if (field[j].get_type().length() < 1)
+				{
+					field[j].set_type(temp[rc].name);
 				}
 
 				temp[rc].count--;
@@ -539,56 +562,114 @@ void Init() // определение начальных условий поля
 void Step()
 {
 	current_player = (current_player + 1) % (count_of_players);
-	cube = rand() % max_cube + 1;
-	//std::cout << cube << std::endl;
 
-	current_position = (players[current_player].get_position() + cube + players[current_player].add_position);
-	players[current_player].add_position = 0;
-
-	if (current_position >= size_of_field)
+	if (players[current_player].is_arrested == true)
 	{
-		players[current_player].debt.add_current_circle();
-		players[current_player].debt.end_credit();
-		players[current_player].add_money(money_for_circle);
-		players[current_player].subtract_money(players[current_player].debt.current_payment_for_circle());
-	}
-
-	current_position = current_position % (size_of_field);
-	players[current_player].set_position(current_position);
-
-	switch (field[current_position].is_bought())
-	{
-	case type_bought:
-		if (field[current_position].get_owner() != current_player)
+		if (players[current_player].time_arrest > 0)
 		{
-			players[current_player].subtract_money(field[current_position].get_tax());
-			players[field[current_position].get_owner()].add_money(field[current_position].get_tax());
-			//std::cout << "Перевод: " << field[current_position].get_tax() << " рублей игроку " << field[current_position].get_owner() << std::endl;
-			swprintf(&info_buffer[0], size_of_buffer, L"Перевод: %8.2f  рублей игроку %d", field[current_position].get_tax(), field[current_position].get_owner());
+			players[current_player].time_arrest--;
 		}
-		break;
-	default:
-		break;
+
+		if (players[current_player].time_arrest == 0)
+		{
+			players[current_player].is_arrested = false;
+		}
+
+		swprintf(&info_buffer[0], size_of_buffer, L"Арест.\nИгроку %s осталось находиться в тюрьме %d ходов", (players[current_player].get_name()).c_str(), players[current_player].time_arrest);
 	}
-
-	swprintf(&info_buffer[0], size_of_buffer, L"Игрок %s перемещается на %d клеток \nБаланс: % 8.2f \nПозиция : % d \n", (players[current_player].get_name()).c_str(), cube, players[current_player].get_money(), players[current_player].get_position());
-
-	if (players[current_player].debt.get_sum() == 0)
-	{
-		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"Кредитов нет. \n");
-	}
-
 	else
 	{
-		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nИнформация по кредиту: \n");
-		players[current_player].debt.info_credit();
-		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, players[current_player].debt.buffer);
-	}
+		
+		cube = rand() % max_cube + 1;
+		//std::cout << cube << std::endl;
 
-	swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nНазвание: %s \nОписание: %s \nЦена: %8.2f \nНалог: %8.2f \nТип клетки: %d \nНомер клетки: %d \nВладелец: %d \n",
-		(field[current_position].get_name()).c_str(), (field[current_position].get_discription()).c_str(), field[current_position].get_price(), field[current_position].get_tax(), field[current_position].get_type_cell(), field[current_position].get_number(), field[current_position].get_owner());
+		current_position = (players[current_player].get_position() + cube + players[current_player].add_position);
+		players[current_player].add_position = 0;
 
-	Chance();
+		if (current_position >= size_of_field)
+		{
+			players[current_player].debt.add_current_circle();
+			players[current_player].debt.end_credit();
+			players[current_player].add_money(money_for_circle);
+			players[current_player].subtract_money(players[current_player].debt.current_payment_for_circle());
+		}
+
+		current_position = current_position % (size_of_field);
+		players[current_player].set_position(current_position);
+
+		switch (field[current_position].is_bought())
+		{
+		case type_bought:
+			if (field[current_position].get_owner() != current_player)
+			{
+				players[current_player].subtract_money(field[current_position].get_tax());
+				players[field[current_position].get_owner()].add_money(field[current_position].get_tax());
+				//std::cout << "Перевод: " << field[current_position].get_tax() << " рублей игроку " << field[current_position].get_owner() << std::endl;
+				swprintf(&info_buffer[0], size_of_buffer, L"Перевод: %8.2f  рублей игроку %d", field[current_position].get_tax(), field[current_position].get_owner());
+			}
+			break;
+		default:
+			break;
+		}
+
+		swprintf(&info_buffer[0], size_of_buffer, L"Игрок %s перемещается на %d клеток \nБаланс: % 8.2f \nПозиция : % d \n", (players[current_player].get_name()).c_str(), cube, players[current_player].get_money(), players[current_player].get_position());
+
+		if (players[current_player].debt.get_sum() == 0)
+		{
+			swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"Кредитов нет. \n");
+		}
+
+		else
+		{
+			swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nИнформация по кредиту: \n");
+			players[current_player].debt.info_credit();
+			swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, players[current_player].debt.buffer);
+		}
+
+		swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nНазвание: %s \nОписание: %s \nЦена: %8.2f \nНалог: %8.2f \nТип клетки: %d \nНомер клетки: %d \nВладелец: %d \n",
+			(field[current_position].get_name()).c_str(), (field[current_position].get_discription()).c_str(), field[current_position].get_price(), field[current_position].get_tax(), field[current_position].get_type_cell(), field[current_position].get_number(), field[current_position].get_owner());
+		
+		if (field[current_position].get_type_cell() == type_prison)
+		{
+			players[current_player].is_arrested = true;
+			//current_player = (current_player + 1) % (count_of_players);
+			players[current_player].time_arrest = def_arrest_time;
+
+			swprintf(&info_buffer[_tcslen(info_buffer)], size_of_buffer, L"\nАрест.\nИгрок %s находится в тюрьме %d ходов", (players[current_player].get_name()).c_str(), players[current_player].time_arrest);
+		}
+
+		if (field[current_position].get_type_cell() == type_incident)
+		{
+			rand_chance = rand() % 7;
+
+			switch (rand_chance)
+			{
+			case chance_ext_id:
+				ChanceRandExcise();
+				break;
+			case chance_new_tecnology_id:
+				ChanceRandNewTecnology();
+				break;
+			case chance_add_money_id:
+				ChanceRandAddMoney();
+				break;
+			case chance_fine_id:
+				ChanceRandFine();
+				break;
+			case chance_rand_move_id:
+				ChanceRandMove();
+				break;
+			case chance_sanctions_id:
+				ChanceRandSanctions();
+				break;
+			case chance_defl_id:
+				ChanceRandDefl();
+				break;
+			default:
+				break;
+			}
+		}
+	}	
 }
 
 void Buy()

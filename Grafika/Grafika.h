@@ -1,4 +1,4 @@
-#pragma once
+    #pragma once
 
 #include "resource.h"
 #include "Const.h"
@@ -50,7 +50,7 @@ void PaintFrame(HDC hdc, HGDIOBJ* obj, HGDIOBJ* pobj, POINT p, int scale)
     SelectObject(hdc, colorDef);
 }
 
-void PaintStart(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale)
+void PaintStart(HINSTANCE hInst, HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale, LPCWSTR id)
 {
     SelectObject(hdc, *obj);
     Rectangle(hdc, p.x, p.y, p.x + scale, p.y + scale);
@@ -61,7 +61,7 @@ void PaintStart(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale)
     SelectObject(hdc, colorDef);
 }
 
-void PaintBank(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale)
+void PaintBank(HINSTANCE hInst, HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale, LPCWSTR id)
 {
     SelectObject(hdc, *obj);
     Rectangle(hdc, p.x, p.y, p.x + scale, p.y + scale);
@@ -72,11 +72,21 @@ void PaintBank(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale)
     SelectObject(hdc, colorDef);
 }
 
-void PaintBuySell(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale, LPCWSTR name, LPCWSTR type, LPCWSTR cost)
+void PaintBuySell(HINSTANCE hInst, HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale, LPCWSTR name, LPCWSTR type, LPCWSTR cost, LPCWSTR id)
 {
-    SelectObject(hdc, *obj);
-    Rectangle(hdc, p.x, p.y, p.x + scale, p.y + scale);
-    SelectObject(hdc, *tobj);
+    HDC bmpdc = CreateCompatibleDC(hdc);
+    HBITMAP hBmp = (HBITMAP)LoadImage(hInst, id, IMAGE_BITMAP, scale, scale, LR_COPYFROMRESOURCE);
+    if (hBmp)
+    {
+        SelectObject(bmpdc, hBmp);
+        BitBlt(hdc, p.x, p.y, p.x + scale, p.y + scale, bmpdc, 0, 0, SRCCOPY);
+    }
+    else
+    {
+        SelectObject(hdc, *obj);
+        Rectangle(hdc, p.x, p.y, p.x + scale, p.y + scale);
+        SelectObject(hdc, *tobj);
+    }
     RECT r;
     SetRect(&r, p.x, p.y, p.x + scale, p.y + scale);
     DrawTextW(hdc, name, -1, &r, DT_VCENTER);
@@ -87,7 +97,7 @@ void PaintBuySell(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale, LPCW
     SelectObject(hdc, colorDef);
 }
 
-void PaintIncident(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale)
+void PaintIncident(HINSTANCE hInst, HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale, LPCWSTR id)
 {
     SelectObject(hdc, *obj);
     Rectangle(hdc, p.x, p.y, p.x + scale, p.y + scale);
@@ -98,7 +108,7 @@ void PaintIncident(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale)
     SelectObject(hdc, colorDef);
 }
 
-void PaintPrison(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale)
+void PaintPrison(HINSTANCE hInst, HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale, LPCWSTR id)
 {
     SelectObject(hdc, *obj);
     Rectangle(hdc, p.x, p.y, p.x + scale, p.y + scale);
@@ -109,7 +119,7 @@ void PaintPrison(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale)
     SelectObject(hdc, colorDef);
 }
 
-void PaintRest(HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale)
+void PaintRest(HINSTANCE hInst, HDC hdc, HGDIOBJ* obj, HGDIOBJ* tobj, POINT p, int scale, LPCWSTR id)
 {
     SelectObject(hdc, *obj);
     Rectangle(hdc, p.x, p.y, p.x + scale, p.y + scale);
